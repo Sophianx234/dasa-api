@@ -1,17 +1,12 @@
-import express from 'express'
-import dotenv from 'dotenv'
-import morgan from 'morgan'
-import imagesRoute from './routes/ImagesRoute.js'
-dotenv.config({path:'./config.env'})
-const app = express()
+import express from "express";
+import dotenv from "dotenv";
 
-app.use(morgan('dev'))
-app.use(express.json())
+import imagesRoute from "./routes/ImagesRoute";
+dotenv.config();
+const app = express();
 
+app.use(express.json());
 
-app.use('/api/v1/images',imagesRoute)
+app.use("/api/v1/images", imagesRoute);
 
-
-
-
-export default app
+export default app;

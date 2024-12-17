@@ -2,11 +2,12 @@
   "name": "dasa-api",
   "version": "1.0.0",
   "main": "index.js",
-  "type": "module",
+  
   "scripts": {
-    "build": "tsc",
+    "build": "tsc --build",
     "start": "tsc && node dist/server.js",
-    "dev": "nodemon src/server.ts"
+    "dev": "nodemon ",
+    "dev:import": "npx tsx ./src/data/import-user-data.ts --import"
   },
   "keywords": [],
   "author": "",
@@ -27,6 +28,8 @@
   "dependencies": {
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
-    "morgan": "^1.10.0"
+    "mongoose": "^8.9.1",
+    "morgan": "^1.10.0",
+    "tsx": "^4.19.2"
   }
 }
