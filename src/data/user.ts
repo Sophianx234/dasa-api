@@ -1,4 +1,4 @@
-[
+export const users = [
     {
       "id": "1f87e8a3-4c67-4e2a-baa8-5d5c3b10a8c4",
       "name": "Sophian Abdul Rahman",

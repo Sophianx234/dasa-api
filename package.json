@@ -7,7 +7,7 @@
     "build": "tsc --build",
     "start": "tsc && node dist/server.js",
     "dev": "nodemon ",
-    "dev:import": "npx tsx ./src/data/import-user-data.ts --import"
+    "dev:import": "npx tsx ./src/data/seeder.ts --import"
   },
   "keywords": [],
   "author": "",

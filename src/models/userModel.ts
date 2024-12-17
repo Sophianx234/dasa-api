@@ -1,8 +1,7 @@
-import { model } from "mongoose";
 import mongoose from 'mongoose';
 
-const userSchema = new mongoose({
-        id: {},
+const userSchema = new mongoose.Schema({
+        
         name:{type:String, require:[true,'name is required']} ,
         email:{type:String, require:[true,'email is required']},
         password:{type:String, require:[true,'password is required']},
