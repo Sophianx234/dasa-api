@@ -7,18 +7,27 @@ dotenv.config()
 
 async function importData() {
   try {
-    await User.insertMany(users)
+    await User.create(users)
+    console.log('Data imported successfully')
     // User.create(users)
   } catch (err) {
     console.log(err);
+  }
+  finally{
+    process.exit()
   }
 }
 async function deleteData() {
   try {
     await User.deleteMany()
+    console.log('Data deleted successfully')
+    
     // User.create(users)
   } catch (err) {
     console.log(err);
+  }
+  finally{
+    process.exit()
   }
 }
 const DB = process.env.DATABASE_LOCAL
@@ -29,8 +38,8 @@ if (process.argv[2] === "--import") {
  
 }
 if (process.argv[2] === "--delete") {
-  console.log("Boruto");
+  
   deleteData()
-  exit()
+  
  
 }
