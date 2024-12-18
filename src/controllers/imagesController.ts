@@ -14,7 +14,9 @@ export async function getAllImages(req: Request, res: Response) {
 
   query = User.find(JSON.parse(queryStr));
   if (req.query.sort){
-    const sortField = typeof req.query.sort === "string" ? req.query.sort : null;
+    let sortField = typeof req.query.sort === "string" ? req.query.sort : null;
+    if(sortField?.includes(',')) sortField = sortField.replace(',',' ')
+        console.log(sortField)
       query = query.sort(sortField)
 
   } 
