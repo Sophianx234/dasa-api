@@ -25,6 +25,14 @@ export async function getAllUsers(req:Request,res:Response){
           
   
     }
+
+    if(req.query.page){
+        const page = Number(req.query.page)  
+        const limit = Number(req.query.limit)
+        const skip = page && limit && (page-1)*limit
+        if(page)
+        query = query.skip(skip).limit(limit)
+    }
   
     const users = await query;
     res.status(200).json({
