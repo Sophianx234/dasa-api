@@ -1,7 +1,7 @@
 import { Request } from "express";
 import User from "../models/userModel";
 import { Query } from "mongoose";
-import { reqQueryType } from "./authController";
+import { reqQueryType } from "../controllers/authController";
 
 export class ApiFeatures<T> {
   queryStr: Record<string, any>;
