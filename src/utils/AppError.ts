@@ -1,4 +1,3 @@
-import { error } from "console"
 
 export class AppError extends Error{
     statusCode:number

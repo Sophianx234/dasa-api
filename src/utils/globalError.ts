@@ -2,13 +2,23 @@ import { NextFunction, Request, Response } from "express";
 import { customError } from "../app";
 
 function sendErrorDev(err:customError,res:Response){
-    res.status(err.statusCode).json({
-        status: err.status,
-        error: err,
-        message: err.message,
-        stack: err.stack,
+    if(err.isOperational){
 
-      });
+        res.status(err.statusCode).json({
+            status: err.status,
+            error: err,
+            message: err.message,
+            stack: err.stack,
+            
+        });
+    } else{
+        res.status(500).json({
+            status: 'error',
+            message: 'something went wrong',
+            
+        });
+
+    }
 }
 function sendErrorProd(err:customError,res:Response){
     res.status(err.statusCode).json({

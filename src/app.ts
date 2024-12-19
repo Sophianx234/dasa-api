@@ -9,6 +9,7 @@ import { globalError } from "./utils/globalError";
 export type customError = Error & {
   statusCode: number;
   status: string;
+  isOperational?: boolean;
 };
 dotenv.config();
 const app = express();
