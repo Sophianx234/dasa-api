@@ -28,10 +28,14 @@ export class ApiFeatures<T> {
       if (sortField?.includes(",")) sortField = sortField.split(",").join(" ");
       this.query = this.query.sort(sortField);
     }
+    return this
+  }
+  limit(){
+
     if (this.queryStr.field) {
       let field: reqQueryType =
-        typeof this.queryStr.field === "string" ? this.queryStr.field : null;
-
+      typeof this.queryStr.field === "string" ? this.queryStr.field : null;
+      
       if (field?.includes(",")) field = field.split(",").join(" ");
       if (field) this.query = this.query.select(field);
     }

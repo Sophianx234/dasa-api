@@ -5,6 +5,7 @@ import imagesRoute from "./routes/ImagesRoute";
 import usersRoute from "./routes/userRoutes";
 import { AppError } from "./utils/AppError";
 import { globalError } from "./utils/globalError";
+import productRoute from './routes/productsRoute'
 
 export type customError = Error & {
   statusCode: number;
@@ -17,6 +18,7 @@ const app = express();
 app.use(express.json());
 
 app.use("/api/v1/images", imagesRoute);
+app.use("/api/v1/products", productRoute);
 app.use("/api/v1/users", usersRoute);
 
 app.all("*", function (req: Request, res: Response, next: NextFunction) {
