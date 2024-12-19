@@ -7,8 +7,9 @@
     "build": "tsc --build",
     "start": "tsc && node dist/server.js",
     "dev": "nodemon ",
-    "dev:import": "npx tsx ./src/data/seeder.ts --import",
-    "dev:delete": "npx tsx ./src/data/seeder.ts --delete"
+    "dev:prod": " set NODE_ENV=production && nodemon ",
+    "dev:import": "npx tsx ./src/data/seeder.ts --import ",
+    "dev:delete": "npx tsx ./src/data/seeder.ts --delete "
   },
   "keywords": [],
   "author": "",
