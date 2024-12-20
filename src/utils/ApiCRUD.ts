@@ -1,4 +1,4 @@
-import { Document, Model, Query } from "mongoose"
+import { Document, Model, Query, UpdateQuery } from "mongoose"
 
 export class ApiCRUD<T> {
     dataStr:unknown
@@ -16,5 +16,12 @@ export class ApiCRUD<T> {
     }
     create(){
             return this.query.create(this.dataStr);
+    }
+    update(){
+        return this.query.findByIdAndUpdate(this.id, this.dataStr as UpdateQuery<T>, {
+              new: true,
+              runValidators:true
+            })
+
     }
 }

@@ -89,9 +89,8 @@ export const updateProduct = catchAsync(
 
     if (!id)
       return next(new AppError("can't find product id. please specify", 404));
-    const product = await Product.findByIdAndUpdate(id, req.body, {
-      new: true,
-    });
+    const feature = new ApiCRUD(req.body,Product,id);
+    const product = await feature.update()
     if (!product)
       return next(new AppError("can't update product with id ", 404));
     res.status(200).json({
