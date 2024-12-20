@@ -82,3 +82,23 @@ export const createProduct = catchAsync(
     });
   },
 );
+
+export const updateProduct = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const { id } = req.params;
+
+    if (!id)
+      return next(new AppError("can't find product id. please specify", 404));
+    const product = await Product.findByIdAndUpdate(id, req.body, {
+      new: true,
+    });
+    if (!product)
+      return next(new AppError("can't update product with id ", 404));
+    res.status(200).json({
+      status: "success",
+      data: {
+        product,
+      },
+    });
+  },
+);

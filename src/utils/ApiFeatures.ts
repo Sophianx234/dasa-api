@@ -12,7 +12,7 @@ export class ApiFeatures<T> {
   }
   filter() {
     const queryObj = { ...this.queryStr };
-    const excludedFields = ["field", "page", "sort", "limit"];
+    const excludedFields = ["field", "page", "sort", "limit","fileType"];
     excludedFields.forEach((el) => delete queryObj[el]);
     let query;
     let queryStr = JSON.stringify(queryObj);
@@ -48,5 +48,15 @@ export class ApiFeatures<T> {
     const skip = page && limit && (page - 1) * limit;
     if (page) this.query = this.query.skip(skip).limit(limit);
     return this;
+  }
+  search(){
+    if(this.queryStr.fileType){
+      const searchField =  this.queryStr.fileType.includes(',')? this.queryStr.fileType.split(',').join(' '):this.queryStr.fileType
+      console.log(this.queryStr.fileType)
+      console.log(searchField)
+      this.query = this.query.find({fileType:searchField})
+      
+    }
+    return this
   }
 }

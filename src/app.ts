@@ -2,7 +2,7 @@ import express, { NextFunction, Request, Response } from "express";
 import dotenv from "dotenv";
 import morgan from 'morgan'
 
-import imagesRoute from "./routes/ImagesRoute";
+import mediaRoute from "./routes/mediaRoute";
 import usersRoute from "./routes/userRoutes";
 import { AppError } from "./utils/AppError";
 import { globalError } from "./utils/globalError";
@@ -18,7 +18,7 @@ const app = express();
 app.use(morgan('dev'))
 app.use(express.json());
 
-app.use("/api/v1/images", imagesRoute);
+app.use("/api/v1/media", mediaRoute);
 app.use("/api/v1/products", productRoute);
 app.use("/api/v1/users", usersRoute);
 

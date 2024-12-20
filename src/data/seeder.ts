@@ -1,17 +1,18 @@
 import dotenv from "dotenv";
 import { users } from "./user";
+import { products } from "./products";
+import {media} from './media'
 import mongoose from "mongoose";
 import User from "../models/userModel";
 import { Product } from "../models/productModel";
-import { products } from "./products";
+import { Media } from "../models/mediaModel";
 dotenv.config();
 
 async function importData() {
   try {
-    
      await User.create(users);
      await Product.create(products)
-
+     await Media.create(media)
     console.log("Data imported successfully");
     // User.create(users)
   } catch (err) {

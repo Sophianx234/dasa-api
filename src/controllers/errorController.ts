@@ -3,13 +3,13 @@ import { Response } from "express";
 
 
 
-function sendErrorProd(err,res){
+/* function sendErrorProd(err,res){
     if(err.isOperational){
         
     }
 
-}
+} */
 
-export default function(req:Request,res:Response){
+/* export default function(req:Request,res:Response){
 
-}
+} */
