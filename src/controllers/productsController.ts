@@ -3,6 +3,7 @@ import { catchAsync } from "../utils/catchAsync";
 import { Product } from "../models/productModel";
 import { ApiFeatures } from "../utils/ApiFeatures";
 import { AppError } from "../utils/AppError";
+import { ApiCRUD } from "../utils/ApiCRUD";
 
 export const getAllProducts = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -12,7 +13,7 @@ export const getAllProducts = catchAsync(
       .limit()
       .pagination();
     const products = await features.query;
-    if (!products) return next(new AppError("can't find products", 404));
+    if (!products.length) return next(new AppError("can't find products", 404));
     res.status(200).json({
       status: "success",
       numProducts: products.length,
@@ -31,7 +32,7 @@ export const getProduct = catchAsync(
       Product.find({ _id: id }),
     ).limit();
     const product = await features.query;
-    if (!product)
+    if (!product.length)
       return next(new AppError("can't find product with that id: ", 404));
     res.status(200).json({
       status: "success",
@@ -41,3 +42,20 @@ export const getProduct = catchAsync(
     });
   },
 );
+
+export const deleteProduct = catchAsync(async(req:Request,res:Response,next:NextFunction)=>{
+    const {id} = req.params
+    if(!id) return next(new AppError("can't find product with that id:",404))
+    const deleteFeature = new ApiCRUD(req.body,Product,id)
+    const product = await deleteFeature.delete()
+    if(!product) return next(new AppError("can't find product with specified ID",404))
+    res.status(200).json({
+        status: 'success',
+        data: null
+    })
+})
+
+export const createProduct = catchAsync(async(req:Request,res:Response,next:NextFunction)=>{
+    const id = req.params
+    const product = await Product.create(req.body)
+})
