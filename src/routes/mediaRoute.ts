@@ -1,11 +1,11 @@
 import { Router } from "express";
-import { getAllMedia, getMedia, updateMedia } from "../controllers/mediaController";
+import { deleteMedia, getAllMedia, getMedia, updateMedia } from "../controllers/mediaController";
 
 
 const router = Router();
 
 router.route('/').get(getAllMedia);
-router.route('/:id').get(getMedia).patch(updateMedia)
+router.route('/:id').get(getMedia).patch(updateMedia).delete(deleteMedia)
 
 
 export default router

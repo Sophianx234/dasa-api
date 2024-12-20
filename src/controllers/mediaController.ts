@@ -61,3 +61,14 @@ export const updateMedia = catchAsync(
     })
   },
 );
+
+export const deleteMedia = catchAsync(async (req:Request,res:Response,next:NextFunction)=>{
+    const {id} = req.params
+    if(!id) return next(new AppError("can't find id:",404))
+    const feature = new ApiCRUD(req.body,Media,id)
+    await feature.delete()
+    res.status(200).json({
+        status: 'success',
+        data: null
+    })
+})
