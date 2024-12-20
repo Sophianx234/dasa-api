@@ -43,19 +43,39 @@ export const getProduct = catchAsync(
   },
 );
 
-export const deleteProduct = catchAsync(async(req:Request,res:Response,next:NextFunction)=>{
-    const {id} = req.params
-    if(!id) return next(new AppError("can't find product with that id:",404))
-    const deleteFeature = new ApiCRUD(req.body,Product,id)
-    const product = await deleteFeature.delete()
-    if(!product) return next(new AppError("can't find product with specified ID",404))
+export const deleteProduct = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const { id } = req.params;
+    if (!id) return next(new AppError("can't find product with that id:", 404));
+    const deleteFeature = new ApiCRUD(req.body, Product, id);
+    const product = await deleteFeature.delete();
+    if (!product)
+      return next(new AppError("can't find product with specified ID", 404));
     res.status(200).json({
-        status: 'success',
-        data: null
-    })
-})
+      status: "success",
+      data: null,
+    });
+  },
+);
 
-export const createProduct = catchAsync(async(req:Request,res:Response,next:NextFunction)=>{
-    const id = req.params
-    const product = await Product.create(req.body)
-})
+export const createProduct = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const { name, description, price, currency, category, stock } = req.body;
+    const product = await Product.create({
+      name,
+      description,
+      price,
+      currency,
+      category,
+      stock,
+    });
+    if (!product)
+      return next(new AppError("can't upload product ", 404));
+    res.status(200).json({
+      status: "success",
+      data: {
+        product,
+      },
+    });
+  },
+);

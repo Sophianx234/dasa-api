@@ -1,5 +1,6 @@
 import express, { NextFunction, Request, Response } from "express";
 import dotenv from "dotenv";
+import morgan from 'morgan'
 
 import imagesRoute from "./routes/ImagesRoute";
 import usersRoute from "./routes/userRoutes";
@@ -14,7 +15,7 @@ export type customError = Error & {
 };
 dotenv.config();
 const app = express();
-
+app.use(morgan('dev'))
 app.use(express.json());
 
 app.use("/api/v1/images", imagesRoute);

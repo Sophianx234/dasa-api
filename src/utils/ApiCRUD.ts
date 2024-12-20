@@ -10,8 +10,8 @@ export class ApiCRUD<T> {
         this.id = id
 
     }
-     delete(){
-           return this.query.findByIdAndDelete(this.id)
+      delete(){
+           return  this.query.findByIdAndDelete(this.id)
             
     }
 }
