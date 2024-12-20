@@ -61,16 +61,19 @@ export const deleteProduct = catchAsync(
 export const createProduct = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
     const { name, description, price, currency, category, stock } = req.body;
-    const product = await Product.create({
-      name,
-      description,
-      price,
-      currency,
-      category,
-      stock,
-    });
-    if (!product)
-      return next(new AppError("can't upload product ", 404));
+    const createProduct = new ApiCRUD(
+      {
+        name,
+        description,
+        price,
+        currency,
+        category,
+        stock,
+      },
+      Product,
+    );
+    const product = await createProduct.create();
+    if (!product) return next(new AppError("can't upload product ", 404));
     res.status(200).json({
       status: "success",
       data: {
