@@ -1,7 +1,7 @@
 
   export const users = [
     {
-      id: "1f87e8a3-4c67-4e2a-baa8-5d5c3b10a8c4",
+      
       name: "Sophian Abdul Rahman",
       email: "sophian@example.com",
       password: "hashedpassword123",
@@ -17,7 +17,6 @@
       status: "active",
     },
     {
-      id: "8b72f9b1-3c41-4d67-b1a2-6e5b7b2b7e3f",
       name: "Mariam Iddrisu",
       email: "mariam@example.com",
       password: "hashedpassword456",
@@ -33,7 +32,6 @@
       status: "active",
     },
     {
-      id: "7c83d2e2-1b77-4d42-81d3-8c6f7b8a6c4d",
       name: "Adam Sulemana",
       email: "adam@example.com",
       password: "hashedpassword789",
@@ -49,7 +47,6 @@
       status: "suspended",
     },
     {
-      id: "5f29e1a3-8d77-4e7a-8c3b-4c6d5e4a2b5c",
       name: "Fatima Alhassan",
       email: "fatima@example.com",
       password: "hashedpassword012",
@@ -65,7 +62,6 @@
       status: "inactive",
     },
     {
-      id: "9e77f2b6-2c41-4d87-baa5-7d6c7c3c9e8f",
       name: "Issah Yakubu",
       email: "issah@example.com",
       password: "hashedpassword345",
@@ -81,7 +77,6 @@
       status: "active",
     },
     {
-      id: "3a22f8b7-5c81-4b23-8b77-8e6f2c7b6c7e",
       name: "Hassan Mumuni",
       email: "hassan@example.com",
       password: "hashedpassword678",

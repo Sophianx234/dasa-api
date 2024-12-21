@@ -40,7 +40,7 @@ export const getAllMessages = catchAsync(
       .limit()
       .sort()
       .pagination();
-    const messages = await feature.query.populate('sender');
+    const messages = await feature.query
     if (!messages.length) return next(new AppError("can't find messages", 404));
     res.status(200).json({
       numMessages: messages.length,

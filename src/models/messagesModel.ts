@@ -1,5 +1,5 @@
 import { NextFunction } from "express";
-import mongoose from "mongoose";
+import mongoose, { CallbackError } from "mongoose";
 
 const messagesSchema = new mongoose.Schema(
   {
@@ -32,8 +32,10 @@ const messagesSchema = new mongoose.Schema(
 );
 
 
-messagesSchema.pre(/^find/, function(this:any,next:NextFunction){
-    this.populate('sender')
+ messagesSchema.pre(/^find/, function(this:any,next){
+    this.populate('sender',
+        ['name','email']).populate('recipient')
+    next()
 })
 
 const Message = mongoose.model("Message", messagesSchema);

@@ -1,6 +1,5 @@
 export const products = [
     {
-      id: "1a2b3c4d5e6f",
       name: "Traditional Smock",
       description: "Authentic Northern Ghanaian smock, handwoven with intricate patterns.",
       price: 250,
@@ -17,7 +16,6 @@ export const products = [
       createdAt: "2024-12-01T08:15:24.000Z",
     },
     {
-      id: "7g8h9i0j1k2l",
       name: "Shea Butter",
       description: "100% natural shea butter sourced from Tamale, ideal for skin and hair care.",
       price: 30,
@@ -34,7 +32,6 @@ export const products = [
       createdAt: "2024-12-02T10:12:50.000Z",
     },
     {
-      id: "9x0y1z2a3b4c",
       name: "Smartphone",
       description: "Latest 5G smartphone with 128GB storage and a 48MP camera.",
       price: 2000,
@@ -68,7 +65,6 @@ export const products = [
       createdAt: "2024-12-05T11:45:00.000Z",
     },
     {
-      id: "8c9d0e1f2g3h",
       name: "Beaded Necklace Set",
       description: "Handcrafted bead necklace and bracelet set, perfect for cultural events.",
       price: 100,
@@ -85,7 +81,6 @@ export const products = [
       createdAt: "2024-12-03T12:22:00.000Z",
     },
     {
-      id: "7u8v9w0x1y2z",
       name: "Air Conditioner",
       description: "Energy-efficient split air conditioner with fast cooling technology.",
       price: 3000,
@@ -102,7 +97,6 @@ export const products = [
       createdAt: "2024-12-04T10:00:00.000Z",
     },
     {
-      id: "3p4q5r6s7t8u",
       name: "Laptop",
       description: "High-performance laptop with Intel i7 processor and 16GB RAM.",
       price: 6500,
