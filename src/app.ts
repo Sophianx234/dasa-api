@@ -4,9 +4,10 @@ import morgan from 'morgan'
 
 import mediaRoute from "./routes/mediaRoute";
 import usersRoute from "./routes/userRoutes";
+import messagesRoute from "./routes/MessageRoute"
+import productsRoute from './routes/productsRoute'
 import { AppError } from "./utils/AppError";
 import { globalError } from "./utils/globalError";
-import productRoute from './routes/productsRoute'
 
 export type customError = Error & {
   statusCode: number;
@@ -19,8 +20,9 @@ app.use(morgan('dev'))
 app.use(express.json());
 
 app.use("/api/v1/media", mediaRoute);
-app.use("/api/v1/products", productRoute);
+app.use("/api/v1/products", productsRoute);
 app.use("/api/v1/users", usersRoute);
+app.use("/api/v1/messages", messagesRoute);
 
 app.all("*", function (req: Request, res: Response, next: NextFunction) {
   next(new AppError(`can't find ${req.originalUrl} on this server `, 404));
