@@ -34,9 +34,10 @@ const messagesSchema = new mongoose.Schema(
 
  messagesSchema.pre(/^find/, function(this:any,next){
     this.populate('sender',
-        ['name','email']).populate('recipient')
+        ['name','email']).populate('recipient',['name','email'])
     next()
 })
+
 
 const Message = mongoose.model("Message", messagesSchema);
 

@@ -5,30 +5,41 @@ import Message from "../models/messagesModel";
 import { AppError } from "../utils/AppError";
 import User from "../models/userModel";
 import { ApiFeatures } from "../utils/ApiFeatures";
+import mongoose from "mongoose";
 
 export const sendMessage = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
-    const { senderId, recipientId } = req.params;
     const { content } = req.body;
-    if (!senderId || !recipientId)
-      return next(new AppError("can't find sender or recipient id", 404));
-    const sender = await User.findById(senderId);
-    const recipient = await User.findById(senderId);
-    if (!sender || !recipient)
-      return next(new AppError("can't find sender or recipient", 404));
+    console.log(content);
+    const { senderId: sender, recipientId: recipient } = req.params;
+    if (
+      !mongoose.Types.ObjectId.isValid(sender) ||
+      !mongoose.Types.ObjectId.isValid(recipient)
+    )
+      return next(new AppError("Invalid sender or recipient id:", 404));
+
+    const newMessage = await Message.create({ sender, recipient, content });
+
+    /* 
     const message = new Message({
-      sender: senderId,
+      sender:senderId,
       recipient: recipientId,
       content,
     });
+    if (!senderId || !recipientId)
+      return next(new AppError("can't find sender or recipient id", 404));
+    const isRecipientValid = await User.findById(senderId);
 
-    await message.save();
+    console.log(isSenderValid)
+    
+
+    await message.save(); */
 
     res.status(201).json({
       status: "message sent successfully",
       data: {
-        message,
-      },
+        newMessage
+      }
     });
   },
 );
@@ -40,7 +51,7 @@ export const getAllMessages = catchAsync(
       .limit()
       .sort()
       .pagination();
-    const messages = await feature.query
+    const messages = await feature.query;
     if (!messages.length) return next(new AppError("can't find messages", 404));
     res.status(200).json({
       numMessages: messages.length,
