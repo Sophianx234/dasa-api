@@ -1,3 +1,4 @@
+import { NextFunction } from "express";
 import mongoose from "mongoose";
 
 const messagesSchema = new mongoose.Schema(
@@ -29,6 +30,11 @@ const messagesSchema = new mongoose.Schema(
   },
   { timestamps: true },
 );
+
+
+messagesSchema.pre(/^find/, function(this:any,next:NextFunction){
+    this.populate('sender')
+})
 
 const Message = mongoose.model("Message", messagesSchema);
 
