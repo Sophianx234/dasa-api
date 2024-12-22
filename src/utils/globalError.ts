@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { customError } from "../app";
+import { AppError } from "./AppError";
 
 function sendErrorDev(err: customError, res: Response) {
   res.status(err.statusCode).json({
@@ -25,6 +26,11 @@ function sendErrorProd(err: customError, res: Response) {
   }
 }
 
+function handleCastErrorDB(err:any){
+  const message = `Invalid ${err.path}: ${err.value}`
+  return new AppError(message,400)
+}
+ 
 export function globalError(
   err: customError,
   req: Request,
@@ -36,7 +42,8 @@ export function globalError(
   if (process.env.NODE_ENV === "development") {
     sendErrorDev(err, res);
   } else if (process.env.NODE_ENV === "production") {
-    sendErrorProd(err, res);
+    let error = {...err}
+    if(err.name === 'CastError') error = handleCastErrorDB(err)
+    sendErrorProd(error, res);
   }
-  
 }
