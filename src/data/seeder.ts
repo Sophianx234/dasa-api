@@ -8,6 +8,8 @@ import { Product } from "../models/productModel";
 import { Media } from "../models/mediaModel";
 import Message from "../models/messagesModel";
 import { messages } from "./messages";
+import Anonymous from "../models/anonymousMessagesModel";
+import { anonymous } from "./anonymous";
 dotenv.config();
 
 async function importData() {
@@ -16,6 +18,7 @@ async function importData() {
      await Product.create(products)
      await Media.create(media)
      await Message.create(messages)
+     await Anonymous.create(anonymous)
     console.log("Data imported successfully");
     // User.create(users)
   } catch (err) {
