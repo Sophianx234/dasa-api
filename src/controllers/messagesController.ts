@@ -20,20 +20,6 @@ export const sendMessage = catchAsync(
 
     const newMessage = await Message.create({ sender, recipient, content });
 
-    /* 
-    const message = new Message({
-      sender:senderId,
-      recipient: recipientId,
-      content,
-    });
-    if (!senderId || !recipientId)
-      return next(new AppError("can't find sender or recipient id", 404));
-    const isRecipientValid = await User.findById(senderId);
-
-    console.log(isSenderValid)
-    
-
-    await message.save(); */
 
     res.status(201).json({
       status: "message sent successfully",
