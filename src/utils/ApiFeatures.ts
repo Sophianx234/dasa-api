@@ -1,7 +1,7 @@
 import { Request } from "express";
 import User from "../models/userModel";
 import { Query } from "mongoose";
-import { reqQueryType } from "../controllers/authController";
+import { reqQueryType } from "../controllers/userController";
 
 export class ApiFeatures<T> {
   queryStr: Record<string, any>;
@@ -12,7 +12,7 @@ export class ApiFeatures<T> {
   }
   filter() {
     const queryObj = { ...this.queryStr };
-    const excludedFields = ["field", "page", "sort", "limit","fileType"];
+    const excludedFields = ["field", "page", "sort", "limit", "fileType"];
     excludedFields.forEach((el) => delete queryObj[el]);
     let query;
     let queryStr = JSON.stringify(queryObj);
@@ -28,14 +28,13 @@ export class ApiFeatures<T> {
       if (sortField?.includes(",")) sortField = sortField.split(",").join(" ");
       this.query = this.query.sort(sortField);
     }
-    return this
+    return this;
   }
-  limit(){
-
+  limit() {
     if (this.queryStr.field) {
       let field: reqQueryType =
-      typeof this.queryStr.field === "string" ? this.queryStr.field : null;
-      
+        typeof this.queryStr.field === "string" ? this.queryStr.field : null;
+
       if (field?.includes(",")) field = field.split(",").join(" ");
       if (field) this.query = this.query.select(field);
     }
@@ -49,14 +48,15 @@ export class ApiFeatures<T> {
     if (page) this.query = this.query.skip(skip).limit(limit);
     return this;
   }
-  search(){
-    if(this.queryStr.fileType){
-      const searchField =  this.queryStr.fileType.includes(',')? this.queryStr.fileType.split(',').join(' '):this.queryStr.fileType
-      console.log(this.queryStr.fileType)
-      console.log(searchField)
-      this.query = this.query.find({fileType:searchField})
-      
+  search() {
+    if (this.queryStr.fileType) {
+      const searchField = this.queryStr.fileType.includes(",")
+        ? this.queryStr.fileType.split(",").join(" ")
+        : this.queryStr.fileType;
+      console.log(this.queryStr.fileType);
+      console.log(searchField);
+      this.query = this.query.find({ fileType: searchField });
     }
-    return this
+    return this;
   }
 }

@@ -1,12 +1,12 @@
 import mongoose from "mongoose";
-
+import bcrypt from "bcrypt";
 const userSchema = new mongoose.Schema({
   name: { type: String, require: [true, "name is required"] },
   email: { type: String, require: [true, "email is required"] },
   password: {
     type: String,
     require: [true, "password is required"],
-    minLength: [8,'password must be at least 8 characters']
+    minLength: [8, "password must be at least 8 characters"],
   },
   role: { type: String, enum: ["user", "admin", "guest"], default: "user" },
   contact: String,
@@ -20,6 +20,16 @@ const userSchema = new mongoose.Schema({
     enum: ["active", "inactive", "suspended"],
     default: "active",
   },
+  confirmPassword: {
+    type: String,
+    required: [true, "please confirm password"],
+    validate: {
+      validator: function (this: any, el: string) {
+        return this.password === el;
+      },
+      message: "Passwords do not match",
+    },
+  },
   createAt: {
     type: Date,
     default: Date.now(),
@@ -27,6 +37,18 @@ const userSchema = new mongoose.Schema({
   },
 });
 
+userSchema.pre("save", async function (this: any, next) {
+  if (!this.isModified("password")) return next();
+  if (this.password === this.confirmPassword)
+    this.password = await bcrypt.hash(
+      this.password,
+      12,
+      function (err, result) {
+        if (err) console.log(err?.message);
+        if (result) console.log(result);
+      },
+    );
+});
 const User = mongoose.model("User", userSchema);
 
 export default User;
