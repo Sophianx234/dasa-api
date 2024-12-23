@@ -111,6 +111,10 @@ export const isLoggedIn = catchAsync(
 );
 
 export const login = catchAsync(async (req:Request,res:Response,next:NextFunction)=>{
-  const {name,password} = req.body
-  if(!name || !password) return next(new AppError("can't find username or password",400))
+  const {email,password} = req.body
+  if(!email || !password) return next(new AppError("can't find username or password",400))
+    const user = await User.findOne({email}).select('+password')
+  if(!user) return next(new AppError("can't find user",400))
+    const correctPass = await user.isCorrectPassword(password)
+  console.log(correctPass)
 })

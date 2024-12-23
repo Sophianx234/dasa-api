@@ -1,13 +1,39 @@
-import mongoose from "mongoose";
+import mongoose, { Document } from "mongoose";
 import bcrypt from "bcrypt";
-const userSchema = new mongoose.Schema({
+import { Model } from "mongoose";
+
+type userDocument = Document & {
+  name: string;
+  email: string;
+  password: string;
+  role?: ["user" | "admin" | "guest"];
+  contact: string;
+  hall?: string;
+  status?: "active" | "inactive" | "suspended";
+  course?: string;
+  profileImage?: string;
+  bio?: string;
+  confirmPassword?: string | boolean|null;
+  createdAt?: Date;
+  isCorrectPassword(
+    this:userDocument,
+    candidatePassword: string,
+    
+  ): Promise<boolean>;
+};
+
+
+
+type userModel = Model<userDocument>;
+
+const userSchema = new mongoose.Schema<userDocument>({
   name: { type: String, require: [true, "name is required"] },
   email: { type: String, require: [true, "email is required"] },
   password: {
     type: String,
     require: [true, "password is required"],
     minLength: [8, "password must be at least 8 characters"],
-    select: false
+    select: false,
   },
   role: { type: String, enum: ["user", "admin", "guest"], default: "user" },
   contact: String,
@@ -25,27 +51,33 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: [true, "please confirm password"],
     validate: {
-      validator: function (this: any, el: string) {
+      validator: function (this:userDocument, el: string) {
         return this.password === el;
       },
       message: "Passwords do not match",
     },
   },
-  createAt: {
+  createdAt: {
     type: Date,
     default: Date.now(),
     select: false,
   },
 });
 
-userSchema.pre("save", async function (this: any, next) {
+userSchema.pre("save", async function (this: userDocument, next) {
   if (!this.isModified("password")) return next();
-  
-    this.password =  await bcrypt.hash(
-      this.password,
-      12);
-    this.confirmPassword = null
+
+  this.password = await bcrypt.hash(this.password, 12);
+  this.confirmPassword = null;
 });
-const User = mongoose.model("User", userSchema);
+
+userSchema.methods.isCorrectPassword = async function (
+  this:userDocument,
+  candidatePassword: string,
+  
+) {
+  return await bcrypt.compare(candidatePassword,this.password);
+};
+const User = mongoose.model<userDocument>("User", userSchema);
 
 export default User;
