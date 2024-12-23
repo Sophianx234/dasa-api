@@ -1,6 +1,7 @@
 import express, { NextFunction, Request, Response } from "express";
 import dotenv from "dotenv";
 import morgan from 'morgan'
+import cookieparser from 'cookie-parser'
 
 import mediaRoute from "./routes/mediaRoute";
 import usersRoute from "./routes/userRoutes";
@@ -20,6 +21,7 @@ dotenv.config();
 const app = express();
 app.use(morgan('dev'))
 app.use(express.json());
+app.use(cookieparser())
 
 app.use("/api/v1/media", mediaRoute);
 app.use("/api/v1/products", productsRoute);
