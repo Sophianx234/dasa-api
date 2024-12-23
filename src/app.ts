@@ -26,7 +26,6 @@ app.use("/api/v1/products", productsRoute);
 app.use("/api/v1/users", usersRoute);
 app.use("/api/v1/messages", messagesRoute);
 app.use("/api/v1/anonymous", anonymousRoute);
-app.use("/api/v1/signup", anonymousRoute);
 
 app.all("*", function (req: Request, res: Response, next: NextFunction) {
   next(new AppError(`can't find ${req.originalUrl} on this server `, 404));
