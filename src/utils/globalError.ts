@@ -31,6 +31,18 @@ function handleCastErrorDB(err:any){
   return new AppError(message,400)
 }
  
+function handleDuplicateFieldsDB(err:any){
+  const value = err.errmsg.match(/(["'])(?:(?=(\\?))\2.)*?\1/)[0]
+  const message = `Duplicate field value: ${value}. Please use another value!`
+  return new AppError(message,400)
+
+}
+function handleValidationErrorDB(err:any){
+  const errors = Object.values(err.errors).map((val:any)=>val.message)
+  const message = `Invalid input data ${errors.join('. ')}`
+  return new AppError(message,400)
+
+}
 export function globalError(
   err: customError,
   req: Request,
@@ -44,6 +56,8 @@ export function globalError(
   } else if (process.env.NODE_ENV === "production") {
     let error = {...err}
     if(err.name === 'CastError') error = handleCastErrorDB(err)
+    if(err.code === 1100) error = handleDuplicateFieldsDB(err)
+    if(err.name === 'ValidationError') error = handleValidationErrorDB(err)
     sendErrorProd(error, res);
   }
 }

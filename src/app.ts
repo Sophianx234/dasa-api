@@ -14,6 +14,7 @@ export type customError = Error & {
   statusCode: number;
   status: string;
   isOperational?: boolean;
+  code?: number
 };
 dotenv.config();
 const app = express();
