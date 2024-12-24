@@ -1,6 +1,7 @@
 import mongoose, { Document } from "mongoose";
 import bcrypt from "bcrypt";
 import { Model } from "mongoose";
+import { NextFunction } from "express";
 
 type userDocument = Document & {
   name: string;
@@ -12,14 +13,18 @@ type userDocument = Document & {
   status?: "active" | "inactive" | "suspended";
   course?: string;
   profileImage?: string;
-  bio?: string;
+  bio?: string
   confirmPassword?: string | boolean|null;
   createdAt?: Date;
+  passwordChangedAt: Date,
+  passwordResetToken: string,
+  passwordResetExpires: Date,
   isCorrectPassword(
     this:userDocument,
     candidatePassword: string,
     
   ): Promise<boolean>;
+  isPasswordChanged(jwtTimestamp:number): boolean
 };
 
 
@@ -62,14 +67,23 @@ const userSchema = new mongoose.Schema<userDocument>({
     default: Date.now(),
     select: false,
   },
+  passwordChangedAt: Date,
+  passwordResetToken: String,
+  passwordResetExpires: Date,
 });
 
 userSchema.pre("save", async function (this: userDocument, next) {
   if (!this.isModified("password")) return next();
-
+  
   this.password = await bcrypt.hash(this.password, 12);
   this.confirmPassword = null;
 });
+
+userSchema.pre("save", async function(this:userDocument,next){
+  if(!this.isModified('password') || this.isNew) return next()
+    this.passwordChangedAt = new Date(Date.now() - 1000) 
+  next()
+})
 
 userSchema.methods.isCorrectPassword = async function (
   this:userDocument,
@@ -78,6 +92,14 @@ userSchema.methods.isCorrectPassword = async function (
 ) {
   return await bcrypt.compare(candidatePassword,this.password);
 };
+
+userSchema.methods.isPasswordChanged = async function(this:userDocument,jwtTimestamp:number){
+  if(this.passwordChangedAt){
+    const changedPassword: number = this.passwordChangedAt.getTime() /1000
+    return jwtTimestamp < changedPassword
+  }
+
+}
 const User = mongoose.model<userDocument>("User", userSchema);
 
 export default User;

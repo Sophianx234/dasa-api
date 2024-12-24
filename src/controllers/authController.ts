@@ -11,10 +11,7 @@ type jwtPayload = {
   iat: number;
   exp: number;
 };
-const verifyToken = (
-  token: string,
-  secret: string,
-): Promise<jwtPayload> => {
+const verifyToken = (token: string, secret: string): Promise<jwtPayload> => {
   return new Promise((resolve, reject) => {
     jwt.verify(token, secret, (err, decoded) => {
       if (err) {
@@ -51,6 +48,7 @@ function createSendToken(
   res.cookie("jwt", token, {
     expires: new Date(Date.now() + cookieExpiry * 24 * 60 * 60 * 1000),
     httpOnly: true,
+    secure: req.secure || req.headers["x-forwarded-proto"] === "https",
   });
 
   user.password = null;
@@ -94,27 +92,51 @@ export const signup = catchAsync(
   },
 );
 
-export const isLoggedIn = catchAsync(
-  async (req: Request, res: Response, next: NextFunction) => {
-    console.log(req.cookies);
-    if (req.cookies.jwt) {
+export const isLoggedIn = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  if (req.cookies.jwt) {
+    try {
       const secret = process.env.JWT_SECRET;
-      if (!secret) return;
+      if (!secret) return next();
       const decoded = await verifyToken(req.cookies.jwt, secret);
-      const { id } = decoded;
-      console.log(id)
-      const currentUser = await User.findById(id)
-         if(!currentUser) return next()
+      const { id, iat } = decoded;
+      console.log(id);
+      const currentUser = await User.findById(id);
+      if (!currentUser) return next();
+      if (currentUser.isPasswordChanged(iat)) {
+        return next();
+      }
+
+      console.log(res.locals);
+      res.locals.user = currentUser;
+      console.log(res.locals);
+      return next();
+    } catch (err) {
+      return next();
     }
-    next();
+  } else {
+    return next();
+  }
+};
+
+export const login = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const { email, password } = req.body;
+    if (!email || !password)
+      return next(new AppError("can't find username or password", 400));
+    const user = await User.findOne({ email }).select("+password");
+    if (!user || !(await user.isCorrectPassword(password)))
+      return next(new AppError("Invalid email or password", 400));
+    createSendToken(user, 200, req, res, next);
   },
 );
 
-export const login = catchAsync(async (req:Request,res:Response,next:NextFunction)=>{
-  const {email,password} = req.body
-  if(!email || !password) return next(new AppError("can't find username or password",400))
-    const user = await User.findOne({email}).select('+password')
-  if(!user) return next(new AppError("can't find user",400))
-    const correctPass = await user.isCorrectPassword(password)
-  console.log(correctPass)
-})
+
+const restrictTo = function(...roles: string[]){
+  return (req:Request ,res:Response,next:NextFunction)=>{
+    if(!roles.includes(req.user.role))
+  }
+}
