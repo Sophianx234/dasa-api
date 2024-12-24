@@ -3,11 +3,11 @@ import bcrypt from "bcrypt";
 import { Model } from "mongoose";
 import { NextFunction } from "express";
 
-type userDocument = Document & {
+export type userDocument = Document & {
   name: string;
   email: string;
   password: string;
-  role?: ["user" | "admin" | "guest"];
+  role?: "user" | "admin" | "guest";
   contact: string;
   hall?: string;
   status?: "active" | "inactive" | "suspended";
