@@ -12,7 +12,7 @@ type jwtPayload = {
   exp: number;
 };
 
-type restrictToPayload = Request &{
+type RequestExtended = Request &{
   user?:userDocument
 }
 
@@ -99,35 +99,6 @@ export const signup = catchAsync(
   },
 );
 
-export const isLoggedIn = async (
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) => {
-  if (req.cookies.jwt) {
-    try {
-      const secret = process.env.JWT_SECRET;
-      if (!secret) return next();
-      const decoded = await verifyToken(req.cookies.jwt, secret);
-      const { id, iat } = decoded;
-      console.log(id);
-      const currentUser = await User.findById(id);
-      if (!currentUser) return next();
-      if (currentUser.isPasswordChanged(iat)) {
-        return next();
-      }
-
-      console.log(res.locals);
-      res.locals.user = currentUser;
-      console.log(res.locals);
-      return next();
-    } catch (err) {
-      return next();
-    }
-  } else {
-    return next();
-  }
-};
 
 export const login = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -142,7 +113,7 @@ export const login = catchAsync(
 );
 
 export const restrictTo = function (...roles: string[]) {
-  return (req: restrictToPayload, res: Response, next: NextFunction) => {
+  return (req: RequestExtended, res: Response, next: NextFunction) => {
     if(req.user){
 
       if (!roles.includes( req.user.role!)) {
@@ -155,3 +126,28 @@ export const restrictTo = function (...roles: string[]) {
     next();
   };
 };
+
+export const protect = async(req:RequestExtended,res:Response,next:NextFunction)=>{
+  let token
+  if(req.cookies.jwt){
+    token = req.cookies.jwt
+
+  }
+  if(!token) return next(new AppError("You are not logged in!.Please login to get access",401))
+  const secret = process.env.JWT_SECRET
+  const decoded = await verifyToken(token,secret!)
+  console.log(decoded)
+  const {id,iat} = decoded
+  const currentUser = await User.findById(id)
+  if(!currentUser) return next(new AppError("The user belonging to this token does no longer exist ",401))
+  
+  if (!currentUser.isPasswordChanged(iat)) return next (new AppError("User recently changed password please login again",401))
+
+  req.user = currentUser
+
+  next()
+  
+
+
+
+}

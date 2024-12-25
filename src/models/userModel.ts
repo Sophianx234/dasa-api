@@ -98,6 +98,7 @@ userSchema.methods.isPasswordChanged = async function(this:userDocument,jwtTimes
     const changedPassword: number = this.passwordChangedAt.getTime() /1000
     return jwtTimestamp < changedPassword
   }
+  return false
 
 }
 const User = mongoose.model<userDocument>("User", userSchema);
