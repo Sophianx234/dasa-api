@@ -151,3 +151,23 @@ export const protect = async(req:RequestExtended,res:Response,next:NextFunction)
 
 
 }
+
+export const updatePassword = catchAsync(async(req:RequestExtended,res:Response,next:NextFunction)=>{
+  const {newPassword,currentPassword,confirmPassword} = req.body
+  if(req.user){
+
+    const user = await User.findById(req.user.id).select('+password')
+
+    if(!user) return next(new AppError("cant find user with that id:",401))
+      if(!(await user.isCorrectPassword(currentPassword))) return next(new AppError("incorrect password. please try again!",401))
+
+      user.password = newPassword
+      user.confirmPassword = confirmPassword
+
+      await user.save()
+      createSendToken(user,200,req,res,next)
+      
+    
+  }
+  next()
+  })
