@@ -1,4 +1,4 @@
-import { NextFunction, Request, Response } from "express";
+import { NextFunction,  Request,  Response } from "express";
 import { catchAsync } from "../utils/catchAsync";
 import { ApiCRUD } from "../utils/ApiCRUD";
 import User, { userDocument } from "../models/userModel";
@@ -12,20 +12,12 @@ type jwtPayload = {
   exp: number;
 };
 
-interface User {
-  id: string;
-  role: string;
-  // ... other user properties
+type restrictToPayload = Request &{
+  user?:userDocument
 }
 
 // Extend the Express Request interface
-declare global {
-  namespace Express {
-    interface Request {
-      user?: User; // Make user optional in case the route doesn't require authentication
-    }
-  }
-}
+
 const verifyToken = (token: string, secret: string): Promise<jwtPayload> => {
   return new Promise((resolve, reject) => {
     jwt.verify(token, secret, (err, decoded) => {
@@ -150,13 +142,16 @@ export const login = catchAsync(
 );
 
 export const restrictTo = function (...roles: string[]) {
-  return (req: Request, res: Response, next: NextFunction) => {
-    if (!roles.includes( req.user.role!)) {
-      return next(
-        new AppError("You are not authorized to access this feature.", 401),
-      );
-    }
+  return (req: restrictToPayload, res: Response, next: NextFunction) => {
+    if(req.user){
 
+      if (!roles.includes( req.user.role!)) {
+        return next(
+          new AppError("You are not authorized to access this feature.", 401),
+        );
+      }
+      
+    }
     next();
   };
 };
