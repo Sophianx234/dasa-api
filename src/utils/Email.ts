@@ -1,7 +1,9 @@
-import { text } from "stream/consumers";
-import { userDocument } from "../models/userModel";
+import { convert } from "html-to-text";
 import nodemailer from "nodemailer";
-import htmlToText from 'html-to-text'
+import { userDocument } from "../models/userModel";
+import dotenv from 'dotenv'
+
+dotenv.config()
 export class Email {
   to: string;
   from: string;
@@ -15,8 +17,9 @@ export class Email {
   }
   newTransport() {
     return nodemailer.createTransport({
-      port: Number(process.env.EMAIL_PORT || 500),
+      port: Number(process.env.EMAIL_PORT),
       host: process.env.EMAIL_HOST,
+
       auth: {
         user: process.env.EMAIL_USERNAME,
         pass: process.env.EMAIL_PASSWORD,
@@ -24,7 +27,7 @@ export class Email {
     });
   }
 
-  async send(subject:string){
+  async send(subject: string) {
     const html = `
     <div style="font-family: Arial, sans-serif; color: #4c4132; padding: 20px;">
         <h1>Hello ${this.firstName}!</h1>
@@ -33,23 +36,22 @@ export class Email {
         <p>The link is valid for only 10 minutes.</p>
         <p>If you did not request this change, please ignore this email.</p>
       </div>
-    `
+    `;
+    const message = 'message not Damian'
     const mailOptions = {
-        from:this.from,
-        to:this.firstName,
-        subject,
-        html,
-        text: htmlToText.convert(html)
-        
-    }
-    await this.newTransport().sendMail(mailOptions)
+      from: this.from,
+      to: this.to,
+      subject,
+      text: message
+    };
+    await this.newTransport().sendMail(mailOptions);
   }
 
-  async sendWelcome(){
-    await this.send(`Welcome to the Dasa Family ${this.firstName}`)
+  async sendWelcome() {
+    await this.send(`Welcome to the Dasa Family ${this.firstName}`);
   }
 
-  async sendPasswordReset(){
-    await this.send('Your password reset token (valid for only 10 minutes)')
+  async sendPasswordReset() {
+    await this.send("Your password reset token (valid for only 10 minutes)");
   }
 }

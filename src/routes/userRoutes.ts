@@ -5,7 +5,8 @@ import {  login, protect, forgotPassword, restrictTo, signup, updatePassword } f
 const router = Router();
 
 router.route('/signup').post(signup)
-router.route('/login').post(forgotPassword,login)
+router.route('/login').post(login)
+router.route('/forgot-password').post(forgotPassword)
 
 router.use(protect)
 router.route("/").get(restrictTo("admin"),getAllUsers);
