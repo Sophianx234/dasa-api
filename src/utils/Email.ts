@@ -1,6 +1,7 @@
 import { text } from "stream/consumers";
 import { userDocument } from "../models/userModel";
 import nodemailer from "nodemailer";
+import htmlToText from 'html-to-text'
 export class Email {
   to: string;
   from: string;
@@ -24,10 +25,21 @@ export class Email {
   }
 
   async send(subject:string){
+    const html = `
+    <div style="font-family: Arial, sans-serif; color: #4c4132; padding: 20px;">
+        <h1>Hello ${this.firstName}!</h1>
+        <p>You requested a password reset. Please click the link below to reset your password:</p>
+        <p><a href="${this.url}" style="color: #ffd8a8;">Click here to reset your password</a></p>
+        <p>The link is valid for only 10 minutes.</p>
+        <p>If you did not request this change, please ignore this email.</p>
+      </div>
+    `
     const mailOptions = {
         from:this.from,
         to:this.firstName,
         subject,
+        html,
+        text: htmlToText.convert(html)
         
     }
     await this.newTransport().sendMail(mailOptions)

@@ -183,6 +183,7 @@ export const updatePassword = catchAsync(async(req:RequestExtended,res:Response,
 
       try{
         const resetURL = `${req.protocol}//${req.get('host')}/api/v1/users/forgot-password/${resetToken}`
+        await new
 
       }catch(err){
 
