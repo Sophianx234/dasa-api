@@ -16,8 +16,8 @@ export type userDocument = Document & {
   confirmPassword?: string | boolean | null;
   createdAt?: Date;
   passwordChangedAt: Date;
-  passwordResetToken: string;
-  passwordResetExpires: Date;
+  passwordResetToken: string |undefined;
+  passwordResetExpires: Date| undefined;
   isCorrectPassword(
     this: userDocument,
     candidatePassword: string,

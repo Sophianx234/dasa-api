@@ -5,6 +5,7 @@ import User, { userDocument } from "../models/userModel";
 import { AppError } from "../utils/AppError";
 import jwt from "jsonwebtoken";
 import { promisify } from "util";
+import { Email } from "../utils/Email";
 
 type jwtPayload = {
   id: string;
@@ -183,9 +184,17 @@ export const updatePassword = catchAsync(async(req:RequestExtended,res:Response,
 
       try{
         const resetURL = `${req.protocol}//${req.get('host')}/api/v1/users/forgot-password/${resetToken}`
-        await new
+        await new Email(user,resetURL).sendPasswordReset()
+        res.status(200).json({
+          status:'success',
+          message: 'Token sent to email'
+        })
 
       }catch(err){
+        user.passwordResetExpires = undefined
+        user.passwordResetToken = undefined
+        await user.save({validateBeforeSave:false})
+        return next(new AppError("There was an error sending reset token",500))
 
       }
 
