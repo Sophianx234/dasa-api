@@ -171,3 +171,21 @@ export const updatePassword = catchAsync(async(req:RequestExtended,res:Response,
   }
   next()
   })
+
+
+  export const forgotPassword = catchAsync(async(req:RequestExtended,res:Response,next:NextFunction)=>{
+    const {email}= req.body
+    const user = await User.findOne({email})
+    if(!user) return next(new AppError("can't find user with the email specified ",401))
+
+      const resetToken = user.createPasswordResetToken()
+      await user.save({validateBeforeSave:false})
+
+      try{
+        const resetURL = `${req.protocol}//${req.get('host')}/api/v1/users/forgot-password/${resetToken}`
+
+      }catch(err){
+
+      }
+
+  })
