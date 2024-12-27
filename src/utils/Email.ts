@@ -2,8 +2,8 @@ import { convert } from "html-to-text";
 import nodemailer from "nodemailer";
 import { userDocument } from "../models/userModel";
 import dotenv from 'dotenv'
+import { AppError } from "./AppError";
 
-dotenv.config()
 export class Email {
   to: string;
   from: string;
@@ -37,21 +37,25 @@ export class Email {
         <p>If you did not request this change, please ignore this email.</p>
       </div>
     `;
-    const message = 'message not Damian'
-    const mailOptions = {
-      from: this.from,
-      to: this.to,
-      subject,
-      text: message
-    };
-    await this.newTransport().sendMail(mailOptions);
+    
+
+      const message = 'message not Damian'
+      const mailOptions = {
+        from: this.from,
+        to: this.to,
+        subject,
+        html,
+        text: convert(html)
+      };
+      return await this.newTransport().sendMail(mailOptions);
+    
   }
 
   async sendWelcome() {
-    await this.send(`Welcome to the Dasa Family ${this.firstName}`);
+   return  await this.send(`Welcome to the Dasa Family ${this.firstName}`);
   }
 
   async sendPasswordReset() {
-    await this.send("Your password reset token (valid for only 10 minutes)");
+   return  await this.send("Your password reset token (valid for only 10 minutes)");
   }
 }

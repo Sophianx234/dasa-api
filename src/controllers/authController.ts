@@ -183,19 +183,13 @@ export const updatePassword = catchAsync(async(req:RequestExtended,res:Response,
       await user.save({validateBeforeSave:false})
 
       const resetURL = `${req.protocol}//${req.get('host')}/api/v1/users/forgot-password/${resetToken}`
-      try{
+      
         await new Email(user,resetURL).sendPasswordReset()
         res.status(200).json({
           status:'success',
           message: 'Token sent to email'
         })
 
-      }catch(err){
-        user.passwordResetExpires = undefined
-        user.passwordResetToken = undefined
-        await user.save({validateBeforeSave:false})
-        return next(new AppError("There was an error sending reset token",500))
-
-      }
+      
 
   })
