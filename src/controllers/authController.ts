@@ -218,3 +218,17 @@ export const updatePassword = catchAsync(async(req:RequestExtended,res:Response,
       createSendToken(user,200,req,res,next)
 
  })
+
+export const logout = catchAsync(async(req:RequestExtended,res:Response,next:NextFunction)=>{
+  res.cookie(
+    'jwt','loggedout',{
+      expires: new Date(Date.now()+ 10*1000),
+      httpOnly:true
+
+    }
+    
+  )
+  res.status(200).json({
+    status:'success'
+  })
+})
