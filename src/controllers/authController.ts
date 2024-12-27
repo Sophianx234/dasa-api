@@ -6,6 +6,7 @@ import { AppError } from "../utils/AppError";
 import jwt from "jsonwebtoken";
 import { promisify } from "util";
 import { Email } from "../utils/Email";
+import crypto from 'crypto'
 
 type jwtPayload = {
   id: string;
@@ -179,15 +180,16 @@ export const updatePassword = catchAsync(async(req:RequestExtended,res:Response,
     const user = await User.findOne({email})
     if(!user) return next(new AppError("can't find user with the email specified ",401))
 
-      const resetToken = user.createPasswordResetToken()
+      const resetToken =  user.createPasswordResetToken()
+      
       await user.save({validateBeforeSave:false})
 
-      const resetURL = `${req.protocol}//${req.get('host')}/api/v1/users/forgot-password/${resetToken}`
+      const resetURL = `${req.protocol}//${req.get('host')}/api/v1/users/reset-password/${resetToken}`
       try{
         await new Email(user,resetURL).sendPasswordReset()
         res.status(200).json({
           status:'success',
-          message: 'Token sent to email'
+          message: 'Token sent to email',
         })
 
       }catch(err){
@@ -199,3 +201,20 @@ export const updatePassword = catchAsync(async(req:RequestExtended,res:Response,
       }
 
   })
+
+ export  const resetPassword = catchAsync(async (req:RequestExtended,res:Response,next:NextFunction)=>{
+    const hashedToken = crypto.createHash('sha256').update(req.params.token).digest('hex')
+
+    const user = await User.findOne({passwordResetToken: hashedToken,passwordResetExpires: {$gt:Date.now()}})
+    if(!user) return next(new AppError('Token is invalid or expired ',400))
+
+      const {password,confirmPassword} = req.body
+      user.confirmPassword = confirmPassword
+      user.password = password
+      user.passwordResetToken = undefined
+      user.passwordResetExpires = undefined
+      await user.save()
+
+      createSendToken(user,200,req,res,next)
+
+ })

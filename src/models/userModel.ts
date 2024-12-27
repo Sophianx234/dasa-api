@@ -100,9 +100,8 @@ userSchema.methods.isPasswordChanged = async function (
   return false;
 };
 
-userSchema.methods.createPasswordResetToken = async function(this:userDocument){
+userSchema.methods.createPasswordResetToken = function(this:userDocument){
   const resetToken = crypto.randomBytes(32).toString('hex')
-
   this.passwordResetToken = crypto.createHash('sha256').update(resetToken).digest('hex')
 
   this.passwordResetExpires = new Date(Date.now()+ 10*60*1000)
