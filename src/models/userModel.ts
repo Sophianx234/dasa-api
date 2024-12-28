@@ -11,6 +11,7 @@ export type userDocument = Document & {
   hall?: string;
   status?: "active" | "inactive" | "suspended";
   course?: string;
+  active: boolean
   profileImage?: string;
   bio?: string;
   confirmPassword?: string | boolean | null;
@@ -48,6 +49,10 @@ const userSchema = new mongoose.Schema<userDocument>({
     type: String,
     enum: ["active", "inactive", "suspended"],
     default: "active",
+  },
+  active: {
+    type: Boolean,
+    default: true
   },
   confirmPassword: {
     type: String,

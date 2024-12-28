@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { getAllUsers } from "../controllers/userController";
+import { deleteUser, getAllUsers } from "../controllers/userController";
 import {  login, protect, forgotPassword, restrictTo, signup, updatePassword, resetPassword, logout } from "../controllers/authController";
 
 const router = Router();
@@ -12,6 +12,8 @@ router.route('/reset-password/:token').patch(resetPassword)
 
 router.use(protect)
 router.route("/").get(restrictTo("admin"),getAllUsers);
+router.route("/deleteUser").delete(deleteUser);
+router.route("/updateUser").patch(deleteUser);
 router.route("/update-password").patch(updatePassword)
 
 export default router;

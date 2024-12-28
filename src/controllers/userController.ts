@@ -5,11 +5,12 @@ import { catchAsync } from "../utils/catchAsync";
 import { AppError } from "../utils/AppError";
 import multer, { FileFilterCallback } from 'multer'
 import { RequestExtended } from "./authController";
+import sharp from 'sharp'
 export type reqQueryType = string | string[] | null;
 const multerStorage = multer.memoryStorage()
 
 const multerFilter =  function(req:RequestExtended,file:Express.Multer.File,cb:FileFilterCallback){
-  if(file?.mimetype.startsWith('image')){
+  if(req.file?.mimetype.startsWith('image')){
     cb(null,true)
   }else{
 
@@ -23,6 +24,20 @@ const upload = multer({
   storage: multerStorage,
   fileFilter: multerFilter,
 
+})
+
+const uploadUserPhoto = upload.array('photo')
+
+const resizeUserPhoto = catchAsync(async(req:RequestExtended,res:Response,next:NextFunction)=>{
+  if(!req.file) return next()
+    if(req.user){
+
+      req.file.filename = `user-${req.user.id}-${Date.now()}.jpeg`
+      await sharp(req.file.buffer).resize(500,500,{
+        fit:'fill'
+      }).toFormat('jpeg').jpeg({quality:90}).toFile(`public/img/users/${req.file.filename}`)
+    }
+    next()
 })
 
 export const getAllUsers = catchAsync(
@@ -43,4 +58,21 @@ export const getAllUsers = catchAsync(
     });
   },
 );
+
+
+export const deleteUser = catchAsync(async(req:RequestExtended,res:Response,next:NextFunction)=>{
+  req.params.id = req.user?.id
+  const user = await User.findByIdAndUpdate(req.params.id,{active:false})
+  if(!user) return next(new AppError("can't find user with specified id",400))
+  res.status(400).json({
+    status:' success',
+    data: null
+  })
+
+
+})
+
+export const updateUser = catchAsync(async(req:RequestExtended,res:Response,next:NextFunction)=>{
+  const {name,hall,contact}
+})
 
