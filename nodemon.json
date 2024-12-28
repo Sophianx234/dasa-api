@@ -1,7 +1,6 @@
 {
-  "watch": ["src"],
-  "ext": "ts",
-  "execMap": {
-    "ts": "node --no-warnings=ExperimentalWarning --loader ts-node/esm"
-  }
+  "watch": ["src", ".env"],
+  "ext": "ts, json, graphql",
+  "ignore": ["src//.spec.ts", "src//.test.ts"],
+  "exec": "ts-node ./src/server.ts"
 }
