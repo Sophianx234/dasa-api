@@ -14,7 +14,7 @@ type jwtPayload = {
   exp: number;
 };
 
-type RequestExtended = Request &{
+export type RequestExtended = Request &{
   user?:userDocument
 }
 
