@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import User from "../models/userModel";
+import User, { userDocument } from "../models/userModel";
 import { ApiFeatures } from "../utils/ApiFeatures";
 import { catchAsync } from "../utils/catchAsync";
 import { AppError } from "../utils/AppError";
@@ -10,7 +10,9 @@ export type reqQueryType = string | string[] | null;
 const multerStorage = multer.memoryStorage()
 
 const multerFilter =  function(req:RequestExtended,file:Express.Multer.File,cb:FileFilterCallback){
-  if(req.file?.mimetype.startsWith('image')){
+  console.log(file)
+  req.file = file
+  if(file?.mimetype.startsWith('image')){
     cb(null,true)
   }else{
 
@@ -26,9 +28,9 @@ const upload = multer({
 
 })
 
-const uploadUserPhoto = upload.array('photo')
+export const uploadUserPhoto = upload.single('profileImage')
 
-const resizeUserPhoto = catchAsync(async(req:RequestExtended,res:Response,next:NextFunction)=>{
+export const resizeUserPhoto = catchAsync(async(req:RequestExtended,res:Response,next:NextFunction)=>{
   if(!req.file) return next()
     if(req.user){
 
@@ -39,6 +41,16 @@ const resizeUserPhoto = catchAsync(async(req:RequestExtended,res:Response,next:N
     }
     next()
 })
+
+const filteredObj = function(obj: Record<string,any>,...allowedFields:string[]){
+  const newObj:Record<string,any> = {}
+  Object.keys(obj).forEach((el:any)=>{
+    if(allowedFields.includes(el)) newObj[el] = obj[el]
+  })
+
+  return newObj
+}
+
 
 export const getAllUsers = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -73,6 +85,22 @@ export const deleteUser = catchAsync(async(req:RequestExtended,res:Response,next
 })
 
 export const updateUser = catchAsync(async(req:RequestExtended,res:Response,next:NextFunction)=>{
-  const {name,hall,contact}
+  const filteredBody = filteredObj(req.body,'name','hall','course','contact')
+  if(req.file) filteredBody.profileImage = req.file.filename
+  console.log(filteredBody)
+
+  const updatedUser = await User.findByIdAndUpdate(req.user?.id,filteredBody,{
+    new:true,
+    runValidators:true
+  })
+  if(!updatedUser) return next(new AppError("can't find user with that id",400))
+
+    res.status(200).json({
+      status: 'success',
+      data:{
+        updatedUser
+      }
+    })
+
 })
 
