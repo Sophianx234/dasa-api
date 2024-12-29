@@ -4,24 +4,23 @@ import { ApiFeatures } from "../utils/ApiFeatures";
 import { catchAsync } from "../utils/catchAsync";
 import { AppError } from "../utils/AppError";
 import multer, { FileFilterCallback } from "multer";
+import fs from "fs";
 import { RequestExtended } from "./authController";
 import cloudinary from "../middleware/cloudinary";
 export type reqQueryType = string | string[] | null;
 
-
-
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, 'uploads')
+    cb(null, "uploads");
   },
-  filename: function (req:RequestExtended, file, cb) {
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9)
-    cb(null, `user-${req.user?.id}-${uniqueSuffix}.${file.originalname.split('.')[1]}`)
-  }
-})
-
-
-
+  filename: function (req: RequestExtended, file, cb) {
+    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
+    cb(
+      null,
+      `user-${req.user?.id}-${uniqueSuffix}.${file.originalname.split(".")[1]}`,
+    );
+  },
+});
 
 const multerFilter = function (
   req: RequestExtended,
@@ -37,31 +36,37 @@ const multerFilter = function (
 };
 
 const upload = multer({
-  storage
+  storage,
+  fileFilter: multerFilter,
 });
 
 export const uploadUserPhoto = upload.single("image");
 
 export const resizeUserPhoto = catchAsync(
   async (req: RequestExtended, res: Response, next: NextFunction) => {
-   
-   console.log(req.file)
-    /* if(req.file){
+    if (req.file) {
+      const image = req.file.path;
+      console.log("image", image);
 
       const uploadResult = await cloudinary.uploader
-      .upload(
-        req.file, {
-          public_id: 'shoes',
-        }
-      )
-      .catch((error) => {
-        console.log(error);
-      });
-      
+        .upload(image, {
+          folder: "Dasa/users",
+          public_id: req.user?.id,
+          overwrite: true,
+          use_filename: true,
+          unique_filename: true,
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+      fs.unlinkSync(image);
+
       console.log(uploadResult);
+      await User.findByIdAndUpdate(req.user?.id, {
+        profileImage: uploadResult?.secure_url,
+      });
     }
- */
-    
+
     next();
   },
 );
@@ -119,8 +124,6 @@ export const updateUser = catchAsync(
       "course",
       "contact",
     );
-    if (req.file) filteredBody.profileImage = req.file.filename;
-    console.log(filteredBody);
 
     const updatedUser = await User.findByIdAndUpdate(
       req.user?.id,
