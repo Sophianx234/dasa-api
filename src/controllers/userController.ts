@@ -5,27 +5,31 @@ import { catchAsync } from "../utils/catchAsync";
 import { AppError } from "../utils/AppError";
 import multer, { FileFilterCallback } from "multer";
 import { RequestExtended } from "./authController";
-import sharp from "sharp";
-import axios from "axios";
-import FormData from "form-data";
+import cloudinary from "../middleware/cloudinary";
 export type reqQueryType = string | string[] | null;
 
 
 
-const bufferToBlob = (buffer: Buffer, mimeType: string) => {
-  return new Blob([buffer], { type: mimeType });
-};
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, 'uploads')
+  },
+  filename: function (req:RequestExtended, file, cb) {
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9)
+    cb(null, `user-${req.user?.id}-${uniqueSuffix}.${file.originalname.split('.')[1]}`)
+  }
+})
 
-const multerStorage = multer.memoryStorage();
+
+
 
 const multerFilter = function (
   req: RequestExtended,
   file: Express.Multer.File,
   cb: FileFilterCallback,
 ) {
-  console.log(file);
-  req.file = file;
   if (file?.mimetype.startsWith("image")) {
+    req.file = file;
     cb(null, true);
   } else {
     cb(new AppError("can't upload file. please upload only images", 400));
@@ -33,36 +37,31 @@ const multerFilter = function (
 };
 
 const upload = multer({
-  storage: multerStorage,
-  fileFilter: multerFilter,
+  storage
 });
 
-export const uploadUserPhoto = upload.single("profileImage");
+export const uploadUserPhoto = upload.single("image");
 
 export const resizeUserPhoto = catchAsync(
   async (req: RequestExtended, res: Response, next: NextFunction) => {
-    if (!req.file) return next();
-    if (req.user) {
-      req.file.filename = `user-${req.user.id}-${Date.now()}.jpeg`;
-      const resizedBuffer = await sharp(req.file.buffer)
-        .resize(500, 500, {
-          fit: "fill",
-        })
-        .toFormat("jpeg")
-        .jpeg({ quality: 90 })
-        .toBuffer();
-      const resizedBlob = bufferToBlob(resizedBuffer,'image/jpeg')
-      const formData = new FormData();
-      formData.append("image", resizedBlob, req.file.filename); // Append the image buffer to FormData
-      const api_key = process.env.API_KEY_IMAGE_BB;
-      const response = await axios.post(
-        `https://api.imgbb.com/1/upload?key=${api_key}`,formData,{
-          headers: {
-            ...formData.getHeaders()
-          }
+   
+   console.log(req.file)
+    /* if(req.file){
+
+      const uploadResult = await cloudinary.uploader
+      .upload(
+        req.file, {
+          public_id: 'shoes',
         }
-      );
+      )
+      .catch((error) => {
+        console.log(error);
+      });
+      
+      console.log(uploadResult);
     }
+ */
+    
     next();
   },
 );
