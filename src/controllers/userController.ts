@@ -1,12 +1,13 @@
 import { NextFunction, Request, Response } from "express";
-import User, { userDocument } from "../models/userModel";
-import { ApiFeatures } from "../utils/ApiFeatures";
-import { catchAsync } from "../utils/catchAsync";
-import { AppError } from "../utils/AppError";
-import multer, { FileFilterCallback } from "multer";
 import fs from "fs";
-import { RequestExtended } from "./authController";
+import multer, { FileFilterCallback } from "multer";
 import cloudinary from "../middleware/cloudinary";
+import User from "../models/userModel";
+import { ApiFeatures } from "../utils/ApiFeatures";
+import { AppError } from "../utils/AppError";
+import { catchAsync } from "../utils/catchAsync";
+import { RequestExtended } from "./authController";
+import { filteredObj } from "../utils/filteredObj";
 export type reqQueryType = string | string[] | null;
 
 const storage = multer.diskStorage({
@@ -61,7 +62,6 @@ export const resizeUserPhoto = catchAsync(
         });
       fs.unlinkSync(image);
 
-      console.log(uploadResult);
       await User.findByIdAndUpdate(req.user?.id, {
         profileImage: uploadResult?.secure_url,
       });
@@ -71,17 +71,7 @@ export const resizeUserPhoto = catchAsync(
   },
 );
 
-const filteredObj = function (
-  obj: Record<string, any>,
-  ...allowedFields: string[]
-) {
-  const newObj: Record<string, any> = {};
-  Object.keys(obj).forEach((el: any) => {
-    if (allowedFields.includes(el)) newObj[el] = obj[el];
-  });
 
-  return newObj;
-};
 
 export const getAllUsers = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -105,7 +95,9 @@ export const getAllUsers = catchAsync(
 export const deleteUser = catchAsync(
   async (req: RequestExtended, res: Response, next: NextFunction) => {
     req.params.id = req.user?.id;
-    const user = await User.findByIdAndUpdate(req.params.id, { active: false });
+    const user = await User.findByIdAndUpdate(req.params.id, { active: false },{
+      new:true
+    });
     if (!user)
       return next(new AppError("can't find user with specified id", 400));
     res.status(400).json({
