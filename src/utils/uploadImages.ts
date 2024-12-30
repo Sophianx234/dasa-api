@@ -3,6 +3,7 @@ import { RequestExtended } from "../controllers/authController";
 import { multerFile } from "../controllers/mediaController";
 import cloudinary from "../middleware/cloudinary";
 import fs from "fs";
+import { Media } from "../models/mediaModel";
 export const uploadImages = async function (
   req: RequestExtended,
   
@@ -10,15 +11,18 @@ export const uploadImages = async function (
   if (req.files) {
     const images: multerFile[] = req.files as multerFile[];
 
-    const result = images.map((image) => {
-      cloudinary.uploader.upload(image.path, {
+    const results = images.map(async(image) => {
+     const uploads =  await cloudinary.uploader.upload(image.path, {
         overwrite: true,
         use_filename: true,
         unique_filename: true,
         folder: "Dasa/media",
       });
+      
       fs.unlinkSync(image.path);
+      return  uploads
+       
     });
-    return await Promise.all(result);
-  }
+    return await Promise.all(results)
+}
 };

@@ -21,7 +21,17 @@ export const uploadMedia = upload.array('file')
 
 export const uploadMediaToCloud = catchAsync(async(req:RequestExtended,res:Response,next:NextFunction)=>{
   console.log(req.files)
-  await uploadImages(req,next)
+  const uploadResults = await uploadImages(req)
+  console.log('Upload Results',uploadResults)
+  if(!uploadResults) return next(new AppError('please select images to be uploaded',400))
+  uploadResults?.map(async (result)=>{
+    await Media.create(result)
+
+  })
+  res.status(200).json({
+    status:'success',
+    message:'uploaded successfully'
+  })
   
 })
 
