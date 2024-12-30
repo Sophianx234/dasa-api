@@ -1,13 +1,12 @@
 import { NextFunction, Request, Response } from "express";
+import { upload } from "../middleware/multer";
 import { Media } from "../models/mediaModel";
 import { ApiCRUD } from "../utils/ApiCRUD";
 import { ApiFeatures } from "../utils/ApiFeatures";
 import { AppError } from "../utils/AppError";
 import { catchAsync } from "../utils/catchAsync";
-import { RequestExtended } from "./authController";
-import { upload } from "../middleware/multer";
-import cloudinary from "../middleware/cloudinary";
 import { uploadImages } from "../utils/uploadImages";
+import { RequestExtended } from "./authController";
 
 export type multerFile = Express.Multer.File
 
@@ -20,9 +19,7 @@ export const uploadMedia = upload.array('file')
 
 
 export const uploadMediaToCloud = catchAsync(async(req:RequestExtended,res:Response,next:NextFunction)=>{
-  console.log(req.files)
-  const uploadResults = await uploadImages(req)
-  console.log('Upload Results',uploadResults)
+  const uploadResults = await uploadImages(req,'Dasa/media')
   if(!uploadResults) return next(new AppError('please select images to be uploaded',400))
   uploadResults?.map(async (result)=>{
     await Media.create(result)

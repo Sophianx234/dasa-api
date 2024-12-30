@@ -21,7 +21,7 @@ const storage = multer.diskStorage({
     file: Express.Multer.File,
     cb: FileFilterCallback,
   ) {
-    if (file?.mimetype.startsWith("image")) {
+    if (file?.mimetype.startsWith("image") || file.mimetype.startsWith('video')) {
       
       cb(null, true);
     } else {
