@@ -8,29 +8,24 @@ import { catchAsync } from "../utils/catchAsync";
 import { uploadImages } from "../utils/uploadImages";
 import { RequestExtended } from "./authController";
 
-export type multerFile = Express.Multer.File
+export type multerFile = Express.Multer.File;
 
+export const uploadMedia = upload.array("file");
 
-export const uploadMedia = upload.array('file')
-
-
-
-
-
-
-export const uploadMediaToCloud = catchAsync(async(req:RequestExtended,res:Response,next:NextFunction)=>{
-  const uploadResults = await uploadImages(req,'Dasa/media')
-  if(!uploadResults) return next(new AppError('please select images to be uploaded',400))
-  uploadResults?.map(async (result)=>{
-    await Media.create(result)
-
-  })
-  res.status(200).json({
-    status:'success',
-    message:'uploaded successfully'
-  })
-  
-})
+export const uploadMediaToCloud = catchAsync(
+  async (req: RequestExtended, res: Response, next: NextFunction) => {
+    const uploadResults = await uploadImages(req, "Dasa/media");
+    if (!uploadResults)
+      return next(new AppError("please select images to be uploaded", 400));
+    uploadResults?.map(async (result) => {
+      await Media.create(result);
+    });
+    res.status(200).json({
+      status: "success",
+      message: "uploaded successfully",
+    });
+  },
+);
 
 export const getAllMedia = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {

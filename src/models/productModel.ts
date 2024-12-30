@@ -1,6 +1,23 @@
-import mongoose from "mongoose";
+import mongoose, { Model } from "mongoose";
 
-const productSchema = new mongoose.Schema({
+export type productDocument = Document &{
+       
+ name:string,
+
+description: string,
+price:number,
+currency:string,
+category: string,
+stock:number,
+images:string[],
+seller:string,
+sellerContact: string,
+ratings:number,
+createdAt:string
+}
+
+export type productModel = Model<productDocument>
+const productSchema = new mongoose.Schema<productDocument>({
     
  name:{
     type:String,
@@ -26,4 +43,4 @@ createdAt:String
 })
 
 
-export const Product = mongoose.model("Product",productSchema)
+export const Product = mongoose.model<productDocument>("Product",productSchema)
