@@ -8,38 +8,9 @@ import { AppError } from "../utils/AppError";
 import { catchAsync } from "../utils/catchAsync";
 import { RequestExtended } from "./authController";
 import { filteredObj } from "../utils/filteredObj";
+import { upload } from "../middleware/multer";
 export type reqQueryType = string | string[] | null;
 
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, "uploads");
-  },
-  filename: function (req: RequestExtended, file, cb) {
-    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
-    cb(
-      null,
-      `user-${req.user?.id}-${uniqueSuffix}.${file.originalname.split(".")[1]}`,
-    );
-  },
-});
-
-const multerFilter = function (
-  req: RequestExtended,
-  file: Express.Multer.File,
-  cb: FileFilterCallback,
-) {
-  if (file?.mimetype.startsWith("image")) {
-    req.file = file;
-    cb(null, true);
-  } else {
-    cb(new AppError("can't upload file. please upload only images", 400));
-  }
-};
-
-const upload = multer({
-  storage,
-  fileFilter: multerFilter,
-});
 
 export const uploadUserPhoto = upload.single("image");
 

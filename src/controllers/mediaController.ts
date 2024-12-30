@@ -1,9 +1,29 @@
 import { NextFunction, Request, Response } from "express";
 import { Media } from "../models/mediaModel";
-import { ApiFeatures } from "../utils/ApiFeatures";
-import { catchAsync } from "../utils/catchAsync";
-import { AppError } from "../utils/AppError";
 import { ApiCRUD } from "../utils/ApiCRUD";
+import { ApiFeatures } from "../utils/ApiFeatures";
+import { AppError } from "../utils/AppError";
+import { catchAsync } from "../utils/catchAsync";
+import { RequestExtended } from "./authController";
+import { upload } from "../middleware/multer";
+import cloudinary from "../middleware/cloudinary";
+import { uploadImages } from "../utils/uploadImages";
+
+export type multerFile = Express.Multer.File
+
+
+export const uploadMedia = upload.array('file')
+
+
+
+
+
+
+export const uploadMediaToCloud = catchAsync(async(req:RequestExtended,res:Response,next:NextFunction)=>{
+  console.log(req.files)
+  await uploadImages(req,next)
+  
+})
 
 export const getAllMedia = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
