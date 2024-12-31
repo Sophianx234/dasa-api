@@ -1,13 +1,15 @@
 import express, { NextFunction, Request, Response } from "express";
 import dotenv from "dotenv";
-import morgan from 'morgan'
-import cookieparser from 'cookie-parser'
+import morgan from "morgan";
+import cookieparser from "cookie-parser";
+import rateLimit from "express-rate-limit";
+import helmet from "helmet";
 
 import mediaRoute from "./routes/mediaRoute";
 import usersRoute from "./routes/userRoutes";
-import messagesRoute from "./routes/MessageRoute"
-import productsRoute from './routes/productsRoute'
-import anonymousRoute from './routes/anonymousRoute'
+import messagesRoute from "./routes/MessageRoute";
+import productsRoute from "./routes/productsRoute";
+import anonymousRoute from "./routes/anonymousRoute";
 import { AppError } from "./utils/AppError";
 import { globalError } from "./utils/globalError";
 
@@ -15,13 +17,26 @@ export type customError = Error & {
   statusCode: number;
   status: string;
   isOperational?: boolean;
-  code?: number
+  code?: number;
 };
 dotenv.config();
 const app = express();
-app.use(morgan('dev'))
-app.use(express.json());
-app.use(cookieparser())
+const limiter = rateLimit({
+  max: 100,
+  windowMs: 60 * 60 * 1000,
+  message: "Too many request from this IP, please try again in an hour!",
+});
+
+app.use(helmet());
+if (process.env.NODE_ENV === "development") {
+  app.use(morgan("dev"));
+}
+app.use("/api", limiter);
+app.use(express.json({
+  limit:'10kb'
+}));
+
+app.use(cookieparser());
 
 app.use("/api/v1/media", mediaRoute);
 app.use("/api/v1/products", productsRoute);

@@ -1,9 +1,7 @@
-import { NextFunction } from "express";
+import fs from "fs";
 import { RequestExtended } from "../controllers/authController";
 import { multerFile } from "../controllers/mediaController";
 import cloudinary from "../middleware/cloudinary";
-import fs from "fs";
-import { Media } from "../models/mediaModel";
 export const uploadImages = async function (req: RequestExtended, folder:string) {
   if (req.files) {
     const images: multerFile[] = req.files as multerFile[];
