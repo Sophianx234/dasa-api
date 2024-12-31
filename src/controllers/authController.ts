@@ -24,9 +24,9 @@ const verifyToken = (token: string, secret: string): Promise<jwtPayload> => {
   return new Promise((resolve, reject) => {
     jwt.verify(token, secret, (err, decoded) => {
       if (err) {
-        reject(err);
+        reject(err)
       } else {
-        if (!decoded) throw new Error("decoded value is undefined");
+        
         resolve(decoded as jwtPayload);
       }
     });
@@ -136,18 +136,23 @@ export const protect = async(req:RequestExtended,res:Response,next:NextFunction)
 
   }
   if(!token) return next(new AppError("You are not logged in!.Please login to get access",401))
+    try{
   const secret = process.env.JWT_SECRET
   const decoded = await verifyToken(token,secret!)
-  console.log(decoded)
+  if(!decoded) return next(new AppError("You are not logged in!.Please login to get access",401))
+    console.log(decoded)
   const {id,iat} = decoded
   const currentUser = await User.findById(id)
   if(!currentUser) return next(new AppError("The user belonging to this token does no longer exist ",401))
-  
-  if (!currentUser.isPasswordChanged(iat)) return next (new AppError("User recently changed password please login again",401))
-
-  req.user = currentUser
-
-  next()
+    
+    if (!currentUser.isPasswordChanged(iat)) return next (new AppError("User recently changed password please login again",401))
+      
+      req.user = currentUser
+      
+      next()
+    }catch(err){
+      return next(new AppError('Jwt Token expired. Please login again!',400))
+    }
   
 
 
