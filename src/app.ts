@@ -4,6 +4,10 @@ import morgan from "morgan";
 import cookieparser from "cookie-parser";
 import rateLimit from "express-rate-limit";
 import helmet from "helmet";
+import mongosanitize from 'express-mongo-sanitize'
+import hpp from 'hpp'
+import cors from 'cors'
+import compression from 'compression'
 
 import mediaRoute from "./routes/mediaRoute";
 import usersRoute from "./routes/userRoutes";
@@ -32,10 +36,13 @@ if (process.env.NODE_ENV === "development") {
   app.use(morgan("dev"));
 }
 app.use("/api", limiter);
+app.use(compression())
+app.use(cors())
 app.use(express.json({
   limit:'10kb'
 }));
-
+app.use(mongosanitize())
+app.use(hpp())
 app.use(cookieparser());
 
 app.use("/api/v1/media", mediaRoute);
