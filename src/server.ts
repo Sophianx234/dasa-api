@@ -5,7 +5,7 @@ process.on('uncaughtException',(err:customError)=>{
         process.exit(1)
 
 })
-const DB = process.env.DATABASE_LOCAL
+const DB = process.env.DATABASE?.replace('<db_password>',process.env.DATABASE_PASSWORD!)
 mongoose.connect(DB!).then(con=>console.log('DB Connection Succesfull'))
 const port = process.env.PORT || 571
 const server = app.listen(port,()=>{
