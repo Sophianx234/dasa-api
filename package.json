@@ -4,7 +4,7 @@
   "main": "index.js",
   "scripts": {
     "build": "tsc --build",
-    "start": "tsc && node src/server.js",
+    "start": "tsc && node dist/server.js",
     "dev": "nodemon ",
     "dev:prod": "cross-env NODE_ENV=production nodemon ",
     "dev:import": "npx tsx ./src/data/seeder.ts --import ",
