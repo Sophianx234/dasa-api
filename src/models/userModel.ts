@@ -32,9 +32,9 @@ export type userDocument = Document & {
 type userModel = Model<userDocument>;
 
 const userSchema = new mongoose.Schema<userDocument>({
-  username: { type: String, require: [true, "name is required"] },
-  firstName: String,
-  lastName: String,
+  username: String,
+  firstName: { type: String, require: [true, "firstname is required"] },
+  lastName: { type: String, require: [true, "lastname is required"] },
   email: { type: String, require: [true, "email is required"] },
   password: {
     type: String,
@@ -46,7 +46,9 @@ const userSchema = new mongoose.Schema<userDocument>({
   contact: String,
   hall: String,
   course: String,
-  profileImage: String,
+  profileImage: {
+    type:String,
+  default: "https://i.ibb.co/BCqPkTT/default-img.jpg"},
   bio: String,
 
   status: {
@@ -82,7 +84,7 @@ userSchema.pre("save", async function (this: userDocument, next) {
   if (!this.isModified("password")) return next();
 
   this.password = await bcrypt.hash(this.password, 12);
-  this.confirmPassword = null;
+  this.confirmPassword = undefined;
 });
 
 userSchema.pre("save", async function (this: userDocument, next) {

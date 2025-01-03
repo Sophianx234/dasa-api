@@ -72,7 +72,8 @@ function createSendToken(
 export const signup = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
     const {
-      name,
+      firstName,
+      lastName,
       email,
       profileImage,
       password,
@@ -83,7 +84,8 @@ export const signup = catchAsync(
     } = req.body;
     const feature = new ApiCRUD(
       {
-        name,
+        firstName,
+        lastName,
         email,
         profileImage,
         password,
