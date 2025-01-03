@@ -9,7 +9,7 @@ export class Email {
   url: string;
   constructor(user: userDocument, url: string) {
     this.to = user.email;
-    this.firstName = user.name.split(" ")[0];
+    this.firstName = user.firstName.split(" ")[0];
     this.from = `Damian X <${process.env.EMAIL_FROM}>`;
     this.url = url;
   }
