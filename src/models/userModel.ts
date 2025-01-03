@@ -3,7 +3,9 @@ import bcrypt from "bcrypt";
 import { Model } from "mongoose";
 import  crypto from 'crypto'
 export type userDocument = Document & {
-  name: string;
+  username: string;
+  firstName: string
+  lastName: string
   email: string;
   password: string;
   role?: "user" | "admin" | "guest";
@@ -30,7 +32,9 @@ export type userDocument = Document & {
 type userModel = Model<userDocument>;
 
 const userSchema = new mongoose.Schema<userDocument>({
-  name: { type: String, require: [true, "name is required"] },
+  username: { type: String, require: [true, "name is required"] },
+  firstName: String,
+  lastName: String,
   email: { type: String, require: [true, "email is required"] },
   password: {
     type: String,
@@ -90,6 +94,9 @@ userSchema.pre("save", async function (this: userDocument, next) {
 userSchema.pre(/^find/,function(this:any,next){
   this.find({ active: { $ne: false } });
   next();
+})
+userSchema.pre('save',function(this:userDocument,next){
+  this.username = `${this.firstName} ${this.lastName}`
 })
 
 userSchema.methods.isCorrectPassword = async function (
