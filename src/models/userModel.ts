@@ -99,6 +99,7 @@ userSchema.pre(/^find/,function(this:any,next){
 })
 userSchema.pre('save',function(this:userDocument,next){
   this.username = `${this.firstName} ${this.lastName}`
+  next()
 })
 
 userSchema.methods.isCorrectPassword = async function (
