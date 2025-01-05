@@ -42,6 +42,7 @@ app.use(
   cors({
     credentials: true,
     origin: ["http://localhost:5173", "https://dasaug.netlify.app/"],
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"]
   })
 );
 app.use(express.json({
