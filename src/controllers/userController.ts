@@ -65,7 +65,8 @@ export const getAllUsers = catchAsync(
 
 export const getUser = catchAsync(async(req:RequestExtended,res:Response,next:NextFunction)=>{
   req.params.id = req.user?.id
-  const user = await User.findById(req.params.id)
+  const feature = new ApiFeatures(req.query,User.findById(req.params.id)).limit()
+  const user = await feature.query
   if(!user) return next(new AppError("Could not find user with specified ID: ",400))
     res.status(200).json({
   status: 'success',

@@ -6,7 +6,7 @@ import { reqQueryType } from "../controllers/userController";
 export class ApiFeatures<T> {
   queryStr: Record<string, any>;
   query: Query<T[], T>;
-  constructor(queryStr: Record<string, any>, query: Query<T[], T>) {
+  constructor(queryStr: Record<string, any>, query: Query<T[]| T, T>) {
     this.queryStr = queryStr;
     this.query = query;
   }
