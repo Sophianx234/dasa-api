@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { deleteUser, getAllUsers, resizeUserPhoto, updateUser, uploadUserPhoto } from "../controllers/userController";
+import { deleteUser, getAllUsers, getUser, resizeUserPhoto, updateUser, uploadUserPhoto } from "../controllers/userController";
 import {  login, protect, forgotPassword, restrictTo, signup, updatePassword, resetPassword, logout } from "../controllers/authController";
 
 const router = Router();
@@ -13,6 +13,7 @@ router.route('/reset-password/:token').patch(resetPassword)
 router.use(protect)
 router.route("/").get(restrictTo("admin"),getAllUsers);
 router.route("/delete-user").delete(deleteUser);
+router.route("/getme").get(getUser);
 router.route("/update-user").patch(uploadUserPhoto,resizeUserPhoto,updateUser);
 router.route("/update-password").patch(updatePassword)
 
