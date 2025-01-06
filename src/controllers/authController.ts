@@ -171,7 +171,7 @@ export const updatePassword = catchAsync(async(req:RequestExtended,res:Response,
       user.confirmPassword = confirmPassword
 
       await user.save()
-      createSendToken(user,200,req,res,next)
+      createSendToken(user,200,req,res)
       
     
   }
@@ -219,7 +219,7 @@ export const updatePassword = catchAsync(async(req:RequestExtended,res:Response,
       user.passwordResetExpires = undefined
       await user.save()
 
-      createSendToken(user,200,req,res,next)
+      createSendToken(user,200,req,res)
 
  })
 
