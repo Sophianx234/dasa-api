@@ -11,8 +11,8 @@ router.route('/forgot-password').post(forgotPassword)
 router.route('/reset-password/:token').patch(resetPassword)
 
 router.use(protect)
-router.route("/getme").get(getUser);
 router.route("/").get(restrictTo("admin"),getAllUsers);
+router.route("/getme").get(getUser);
 router.route("/delete-user").delete(deleteUser);
 router.route("/update-user").patch(uploadUserPhoto,resizeUserPhoto,updateUser);
 router.route("/update-password").patch(updatePassword)
