@@ -35,8 +35,8 @@ app.use(cors());
 app.use(helmet());
 if (process.env.NODE_ENV === "development") {
   app.use(morgan("dev"));
-  app.use(cookieparser());
 }
+app.use(cookieparser());
 // app.use("/api", limiter);
 app.use(compression())
 
