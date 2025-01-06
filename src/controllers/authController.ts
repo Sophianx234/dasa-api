@@ -33,11 +33,11 @@ const verifyToken = (token: string, secret: string): Promise<jwtPayload> => {
   });
 };
 
-function signToken(next: NextFunction, user: any) {
-  const secret: string | undefined = process.env.JWT_SECRET;
+function signToken(user: userDocument) {
+  const secret: string= process.env.JWT_SECRET as string;
   const expires = process.env.JWT_EXPIRES_IN;
-  if (!secret) return next(new AppError("can't find jwt secret", 400));
-  return jwt.sign({ id: user.id }, secret, {
+
+  return jwt.sign({ id: user.id }, secret!, {
     expiresIn: expires,
   });
 }
@@ -45,15 +45,12 @@ function createSendToken(
   user: any,
   statusCode: number,
   req: Request,
-  res: Response,
-  next: NextFunction,
+  res: Response
 ) {
-  const token = signToken(next, user);
-  const cookieExpiry: number | undefined = Number(
-    process.env.JWT_COOKIE_EXPIRES_IN,
+  const token = signToken(user);
+  const cookieExpiry: number = Number(
+    process.env.JWT_COOKIE_EXPIRES_IN
   );
-  if (!cookieExpiry)
-    return next(new AppError("cookie expiry is not defined", 400));
 
   res.cookie("jwt", token, {
     expires: new Date(Date.now()+cookieExpiry*24*60*60*1000),
@@ -99,7 +96,7 @@ export const signup = catchAsync(
     const newUser = await feature.create();
     if (!newUser) return next(new AppError("can't create user ", 400));
 
-    createSendToken(newUser, 200, req, res, next);
+    createSendToken(newUser, 200, req, res);
   },
 );
 
@@ -112,7 +109,7 @@ export const login = catchAsync(
     const user = await User.findOne({ email }).select("+password");
     if (!user || !(await user.isCorrectPassword(password)))
       return next(new AppError("Invalid email or password", 400));
-    createSendToken(user, 200, req, res, next);
+    createSendToken(user, 200, req, res);
   },
 );
 
