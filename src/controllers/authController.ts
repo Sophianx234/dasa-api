@@ -51,12 +51,14 @@ function createSendToken(
     process.env.JWT_COOKIE_EXPIRES_IN
   );
 
-  localStorage.setItem('token',token)
+  res.cookie("token", token, {
+    expires: new Date(Date.now()+cookieExpiry*24*60*60*1000),
+    secure: true
+  });
 
   user.password = null;
   res.status(statusCode).json({
     status: "success",
-    token,
     data: {
       user,
     },
