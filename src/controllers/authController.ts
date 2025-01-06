@@ -51,9 +51,10 @@ function createSendToken(
     process.env.JWT_COOKIE_EXPIRES_IN
   );
 
-  res.cookie("token", token, {
+  res.cookie("token", jwt, {
     expires: new Date(Date.now()+cookieExpiry*24*60*60*1000),
-    secure: true
+    sameSite: 'lax'
+    
   });
 
   user.password = null;
