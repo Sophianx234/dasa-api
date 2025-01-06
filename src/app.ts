@@ -4,10 +4,10 @@ import morgan from "morgan";
 import cookieparser from "cookie-parser";
 import rateLimit from "express-rate-limit";
 import helmet from "helmet";
-import mongosanitize from 'express-mongo-sanitize'
-import hpp from 'hpp'
-import cors from 'cors'
-import compression from 'compression'
+import mongosanitize from "express-mongo-sanitize";
+import hpp from "hpp";
+import cors from "cors";
+import compression from "compression";
 
 import mediaRoute from "./routes/mediaRoute";
 import usersRoute from "./routes/userRoutes";
@@ -31,27 +31,22 @@ const app = express();
 //   message: "Too many request from this IP, please try again in an hour!",
 // });
 
-app.use(cors(
-  {
-
-    origin: ['http://localhost:8000', 'https://dasa-api.onrender.com'],
-    credentials: true,
-    methods: ['POST','PUT','PATCH','DELETE']
-  }
-));
+app.use(cors());
 app.use(helmet());
 if (process.env.NODE_ENV === "development") {
   app.use(morgan("dev"));
 }
 app.use(cookieparser());
 // app.use("/api", limiter);
-app.use(compression())
+app.use(compression());
 
-app.use(express.json({
-  limit:'10kb'
-}));
-app.use(mongosanitize())
-app.use(hpp())
+app.use(
+  express.json({
+    limit: "10kb",
+  }),
+);
+app.use(mongosanitize());
+app.use(hpp());
 
 app.use("/api/v1/media", mediaRoute);
 app.use("/api/v1/products", productsRoute);
