@@ -56,7 +56,7 @@ function createSendToken(
     return next(new AppError("cookie expiry is not defined", 400));
 
   res.cookie("jwt", token, {
-    expires: new Date(cookieExpiry*24*60*60*1000),
+    expires: new Date(Date.now()+cookieExpiry*24*60*60*1000),
     httpOnly: true,
   });
 
