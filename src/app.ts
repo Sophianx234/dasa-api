@@ -35,7 +35,8 @@ app.use(cors(
   {
 
     origin: ['http://localhost:8000', 'https://dasa-api.onrender.com'],
-    credentials: true
+    credentials: true,
+    methods: ['POST','PUT','PATCH','DELETE']
   }
 ));
 app.use(helmet());

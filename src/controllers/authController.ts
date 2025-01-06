@@ -53,7 +53,9 @@ function createSendToken(
 
   res.cookie("token", token, {
     expires: new Date(Date.now()+cookieExpiry*24*60*60*1000),
-    sameSite: 'none'
+    sameSite: 'none',
+    
+    
     
   });
 
