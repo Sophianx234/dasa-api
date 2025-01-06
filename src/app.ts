@@ -34,7 +34,7 @@ const app = express();
 app.use(cors(
   {
 
-    origin: ['localhost:8000', 'https://dasa-api.onrender.com'],
+    origin: ['http://localhost:8000', 'https://dasa-api.onrender.com'],
     credentials: true
   }
 ));
