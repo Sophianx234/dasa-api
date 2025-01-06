@@ -51,9 +51,7 @@ function createSendToken(
     process.env.JWT_COOKIE_EXPIRES_IN
   );
 
-  res.cookie("jwt", token, {
-    expires: new Date(Date.now()+cookieExpiry*24*60*60*1000),
-  });
+  localStorage.setItem('token',token)
 
   user.password = null;
   res.status(statusCode).json({
@@ -131,6 +129,9 @@ export const protect = async(req:RequestExtended,res:Response,next:NextFunction)
   if(req.cookies.jwt){
     token = req.cookies.jwt
 
+  }
+  if(req.headers.authorization){
+    token = req.headers.authorization.split(' ')[1]
   }
   if(!token) return next(new AppError("You are not logged in!.Please login to get access",401))
     try{
