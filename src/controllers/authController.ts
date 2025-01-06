@@ -53,7 +53,6 @@ function createSendToken(
 
   res.cookie("jwt", token, {
     expires: new Date(Date.now()+cookieExpiry*24*60*60*1000),
-    httpOnly: true,
   });
 
   user.password = null;
