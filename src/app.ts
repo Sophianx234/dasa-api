@@ -31,11 +31,11 @@ const app = express();
 //   message: "Too many request from this IP, please try again in an hour!",
 // });
 
-app.use(cookieparser());
 app.use(cors());
 app.use(helmet());
 if (process.env.NODE_ENV === "development") {
   app.use(morgan("dev"));
+  app.use(cookieparser());
 }
 // app.use("/api", limiter);
 app.use(compression())
