@@ -1,12 +1,11 @@
-import { NextFunction,  Request,  Response } from "express";
-import { catchAsync } from "../utils/catchAsync";
-import { ApiCRUD } from "../utils/ApiCRUD";
-import User, { userDocument } from "../models/userModel";
-import { AppError } from "../utils/AppError";
+import crypto from 'crypto';
+import { NextFunction, Request, Response } from "express";
 import jwt from "jsonwebtoken";
-import { promisify } from "util";
+import User, { userDocument } from "../models/userModel";
+import { ApiCRUD } from "../utils/ApiCRUD";
+import { AppError } from "../utils/AppError";
+import { catchAsync } from "../utils/catchAsync";
 import { Email } from "../utils/Email";
-import crypto from 'crypto'
 
 type jwtPayload = {
   id: string;

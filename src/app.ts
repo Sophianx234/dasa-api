@@ -31,6 +31,7 @@ const app = express();
 //   message: "Too many request from this IP, please try again in an hour!",
 // });
 
+app.use(cookieparser());
 app.use(cors());
 app.use(helmet());
 if (process.env.NODE_ENV === "development") {
@@ -44,7 +45,6 @@ app.use(express.json({
 }));
 app.use(mongosanitize())
 app.use(hpp())
-app.use(cookieparser());
 
 app.use("/api/v1/media", mediaRoute);
 app.use("/api/v1/products", productsRoute);
