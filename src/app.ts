@@ -31,7 +31,10 @@ const app = express();
 //   message: "Too many request from this IP, please try again in an hour!",
 // });
 
-app.use(cors());
+app.use(cors({
+  origin: 'http://localhost:5173',
+  credentials: true,
+}));
 app.use(helmet());
 if (process.env.NODE_ENV === "development") {
   app.use(morgan("dev"));

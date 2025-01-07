@@ -1,6 +1,7 @@
 import crypto from 'crypto';
 import { NextFunction, Request, Response } from "express";
 import jwt from "jsonwebtoken";
+import {LocalStorage} from 'node-localstorage'
 import User, { userDocument } from "../models/userModel";
 import { ApiCRUD } from "../utils/ApiCRUD";
 import { AppError } from "../utils/AppError";
@@ -50,14 +51,14 @@ function createSendToken(
   const cookieExpiry: number = Number(
     process.env.JWT_COOKIE_EXPIRES_IN
   );
-
-  res.cookie("token", token, {
-    expires: new Date(Date.now()+cookieExpiry*24*60*60*1000),
-    sameSite: 'lax',
+  
+  res.cookie('jwt',token,{
+    secure: process.env.NODE_ENV === 'production',
+    httpOnly: true,
+    sameSite: 'none',
+    path: '/'
     
-    
-    
-  });
+  })
 
   user.password = null;
   res.status(statusCode).json({
@@ -131,8 +132,8 @@ export const restrictTo = function (...roles: string[]) {
 
 export const protect = async(req:RequestExtended,res:Response,next:NextFunction)=>{
   let token
-  if(req.cookies.jwt){
-    token = req.cookies.jwt
+  if(localStorage.getItem('jwt')){
+    token = localStorage.getItem('jwt')
 
   }
   if(req.headers.authorization){
