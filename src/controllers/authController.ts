@@ -55,7 +55,6 @@ function createSendToken(
   res.cookie('jwt',token,{
     secure: process.env.NODE_ENV === 'production',
     httpOnly: true,
-    expires: new Date(Date.now()+ cookieExpiry*6*60*60*1000),
     sameSite: 'none',
     path: '/'
     
