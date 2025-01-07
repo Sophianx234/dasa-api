@@ -55,6 +55,7 @@ function createSendToken(
   res.cookie('jwt',token,{
     secure: process.env.NODE_ENV === 'production',
     httpOnly: true,
+    expires: new Date(Date.now()*6*60*60*1000),
     sameSite: 'none',
     path: '/'
     
@@ -132,8 +133,8 @@ export const restrictTo = function (...roles: string[]) {
 
 export const protect = async(req:RequestExtended,res:Response,next:NextFunction)=>{
   let token
-  if(localStorage.getItem('jwt')){
-    token = localStorage.getItem('jwt')
+  if(req.cookies.jwt){
+    token = req.cookies.jwt
 
   }
   if(req.headers.authorization){
