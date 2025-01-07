@@ -137,9 +137,7 @@ export const protect = async(req:RequestExtended,res:Response,next:NextFunction)
     token = req.cookies.jwt
 
   }
-  if(req.headers.authorization){
-    token = req.headers.authorization.split(' ')[1]
-  }
+  
   if(!token) return next(new AppError("You are not logged in!.Please login to get access",401))
     try{
   const secret = process.env.JWT_SECRET
