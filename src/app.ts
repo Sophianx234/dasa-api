@@ -32,7 +32,8 @@ const app = express();
 // });
 
 app.use(cors({
-  origin: ['http://localhost:5173','https://dasaug.netlify.app'],
+  // origin: ['http://localhost:5173','https://dasaug.netlify.app',
+  origin: 'http://localhost:5173',
   credentials: true,
   methods: ['POST','PUT','PATCH','DELETE','GET']
 }));
