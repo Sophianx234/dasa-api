@@ -18,6 +18,7 @@ export const resizeUserPhoto = catchAsync(
   async (req: RequestExtended, res: Response, next: NextFunction) => {
     if (req.file) {
       const image = path.resolve(req.file.path);
+      
       console.log("image", image);
 
       const uploadResult = await cloudinary.uploader
