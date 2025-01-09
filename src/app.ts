@@ -37,6 +37,7 @@ app.use(
     origin: "http://localhost:5173",
     credentials: true,
     methods: ["POST", "PUT", "PATCH", "DELETE", "GET"]
+    
   })
 );
 app.use(helmet());

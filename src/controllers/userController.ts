@@ -8,6 +8,7 @@ import { AppError } from "../utils/AppError";
 import { catchAsync } from "../utils/catchAsync";
 import { filteredObj } from "../utils/filteredObj";
 import { RequestExtended } from "./authController";
+import path from 'path'
 export type reqQueryType = string | string[] | null;
 
 
@@ -16,7 +17,7 @@ export const uploadUserPhoto = upload.single("image");
 export const resizeUserPhoto = catchAsync(
   async (req: RequestExtended, res: Response, next: NextFunction) => {
     if (req.file) {
-      const image = req.file.path;
+      const image = path.resolve(req.file.path);
       console.log("image", image);
 
       const uploadResult = await cloudinary.uploader
