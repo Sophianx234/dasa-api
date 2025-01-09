@@ -1,14 +1,13 @@
 import { NextFunction, Request, Response } from "express";
 import fs from "fs";
-import multer, { FileFilterCallback } from "multer";
 import cloudinary from "../middleware/cloudinary";
+import { upload } from "../middleware/multer";
 import User from "../models/userModel";
 import { ApiFeatures } from "../utils/ApiFeatures";
 import { AppError } from "../utils/AppError";
 import { catchAsync } from "../utils/catchAsync";
-import { RequestExtended } from "./authController";
 import { filteredObj } from "../utils/filteredObj";
-import { upload } from "../middleware/multer";
+import { RequestExtended } from "./authController";
 export type reqQueryType = string | string[] | null;
 
 
@@ -104,7 +103,7 @@ export const updateUser = catchAsync(
       filteredBody,
       {
         new: true,
-        runValidators: true,
+        runValidators: false,
       },
     );
     if (!updatedUser)
