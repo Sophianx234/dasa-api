@@ -8,17 +8,16 @@ import { AppError } from "../utils/AppError";
 import { catchAsync } from "../utils/catchAsync";
 import { filteredObj } from "../utils/filteredObj";
 import { RequestExtended } from "./authController";
-import path from 'path'
+import path from "path";
 export type reqQueryType = string | string[] | null;
 
-
-export const uploadUserPhoto = upload.single("image");
+// export const uploadUserPhoto = upload.single("image");
 
 export const resizeUserPhoto = catchAsync(
   async (req: RequestExtended, res: Response, next: NextFunction) => {
     if (req.file) {
       const image = path.resolve(req.file.path);
-      
+
       console.log("image", image);
 
       const uploadResult = await cloudinary.uploader
@@ -39,11 +38,11 @@ export const resizeUserPhoto = catchAsync(
       });
     }
 
-    next();
+    res.status(200).json({
+      status: 'success',
+    })
   },
 );
-
-
 
 export const getAllUsers = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -64,23 +63,29 @@ export const getAllUsers = catchAsync(
   },
 );
 
-export const getUser = catchAsync(async(req:RequestExtended,res:Response,next:NextFunction)=>{
-  req.params.id = req.user?.id
-  const user = await User.findById(req.params.id)
-  if(!user) return next(new AppError("Could not find user with specified ID: ",400))
+export const getUser = catchAsync(
+  async (req: RequestExtended, res: Response, next: NextFunction) => {
+    req.params.id = req.user?.id;
+    const user = await User.findById(req.params.id);
+    if (!user)
+      return next(new AppError("Could not find user with specified ID: ", 400));
     res.status(200).json({
-  status: 'success',
-  user
-    })
-
-})
+      status: "success",
+      user,
+    });
+  },
+);
 
 export const deleteUser = catchAsync(
   async (req: RequestExtended, res: Response, next: NextFunction) => {
     req.params.id = req.user?.id;
-    const user = await User.findByIdAndUpdate(req.params.id, { active: false },{
-      new:true
-    });
+    const user = await User.findByIdAndUpdate(
+      req.params.id,
+      { active: false },
+      {
+        new: true,
+      },
+    );
     if (!user)
       return next(new AppError("can't find user with specified id", 400));
     res.status(400).json({
