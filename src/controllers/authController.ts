@@ -53,7 +53,7 @@ function createSendToken(
     secure: process.env.NODE_ENV === "production",
     expires: new Date(Date.now() + 2 * 60 * 60 * 1000),
     httpOnly: true,
-    sameSite: process.env.NODE_ENV === 'development'?"none":'lax',
+    sameSite: process.env.NODE_ENV === 'production'?"none":'lax',
     path: "/",
   });
 
