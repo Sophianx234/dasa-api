@@ -11,8 +11,7 @@ export const uploadImages = async function (req: RequestExtended, folder:string)
         use_filename: true,
         unique_filename: true,
         folder: format==='image'?`${folder}/images`:format==='video'?`${folder}/videos`:`${folder}/raw`,
-        resource_type:
-          format === "video" || format === "image" ? format : "raw",
+        resource_type: format,
       });
 
       fs.unlinkSync(image.path);
