@@ -1,11 +1,16 @@
 import multer, { FileFilterCallback } from "multer";
 import { RequestExtended } from "../controllers/authController";
 import { AppError } from "../utils/AppError";
+import { fileURLToPath } from "url";
+import path, { dirname } from "path";
 
 
+const __dirname = dirname(__filename);
+
+const uploadsDir = path.resolve(__dirname, "../uploads");
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
-      cb(null, "uploads");
+      cb(null, uploadsDir);
     },
     filename: function (req: RequestExtended, file, cb) {
       const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
