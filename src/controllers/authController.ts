@@ -50,6 +50,7 @@ function createSendToken(
   const cookieExpiry: number = Number(process.env.JWT_COOKIE_EXPIRES_IN);
 
   res.cookie("jwt", token, {
+    secure: process.env.NODE_ENV === "production",
     expires: new Date(Date.now() + 2 * 60 * 60 * 1000),
     httpOnly: true,
     sameSite: process.env.NODE_ENV === 'development'?"lax":'none',
