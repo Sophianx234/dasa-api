@@ -6,7 +6,7 @@ import { AppError } from "../utils/AppError";
 
 ;
 
-const uploadsDir = path.resolve(__dirname, "../uploads");
+const uploadsDir = path.resolve(__dirname, "uploads");
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
       cb(null, uploadsDir);
