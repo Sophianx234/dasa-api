@@ -1,11 +1,10 @@
 import multer, { FileFilterCallback } from "multer";
+import path, { dirname } from "path";
 import { RequestExtended } from "../controllers/authController";
 import { AppError } from "../utils/AppError";
-import { fileURLToPath } from "url";
-import path, { dirname } from "path";
 
 
-const __dirname = dirname(__filename);
+;
 
 const uploadsDir = path.resolve(__dirname, "../uploads");
 const storage = multer.diskStorage({
