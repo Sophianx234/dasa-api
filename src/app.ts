@@ -36,7 +36,8 @@ app.use(
     // origin: ['http://localhost:5173','https://dasaug.netlify.app',
     origin: "http://localhost:5173",
     credentials: true,
-    methods: ["POST", "PUT", "PATCH", "DELETE", "GET"]
+    methods: ["POST", "PUT", "PATCH", "DELETE", "GET"],
+    allowedHeaders: ['Content-Type', 'Authorization']
 
   })
 );
