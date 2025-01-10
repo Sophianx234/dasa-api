@@ -2,11 +2,15 @@ import multer, { FileFilterCallback } from "multer";
 import path, { dirname } from "path";
 import { RequestExtended } from "../controllers/authController";
 import { AppError } from "../utils/AppError";
+import fs from 'fs'
 
 
 ;
 
 const uploadsDir = path.resolve(__dirname, "../uploads");
+if (!fs.existsSync(uploadsDir)) {
+  fs.mkdirSync(uploadsDir, { recursive: true });
+}
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
       cb(null, uploadsDir);
