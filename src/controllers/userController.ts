@@ -1,14 +1,13 @@
 import { NextFunction, Request, Response } from "express";
 import fs from "fs";
+import path from "path";
 import cloudinary from "../middleware/cloudinary";
-import { upload } from "../middleware/multer";
 import User from "../models/userModel";
 import { ApiFeatures } from "../utils/ApiFeatures";
 import { AppError } from "../utils/AppError";
 import { catchAsync } from "../utils/catchAsync";
 import { filteredObj } from "../utils/filteredObj";
 import { RequestExtended } from "./authController";
-import path from "path";
 export type reqQueryType = string | string[] | null;
 
 // export const uploadUserPhoto = upload.single("image");
@@ -16,7 +15,7 @@ export type reqQueryType = string | string[] | null;
 export const resizeUserPhoto = catchAsync(
   async (req: RequestExtended, res: Response, next: NextFunction) => {
     if (req.file) {
-      const image = path.resolve(req.file.path);
+      const image = req.file.path
 
       console.log("image", image);
 
