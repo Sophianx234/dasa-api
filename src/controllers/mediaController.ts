@@ -7,6 +7,7 @@ import { AppError } from "../utils/AppError";
 import { catchAsync } from "../utils/catchAsync";
 import { uploadImages } from "../utils/uploadImages";
 import { RequestExtended } from "./authController";
+import cloudinary from "../middleware/cloudinary";
 
 export type multerFile = Express.Multer.File;
 
@@ -37,14 +38,22 @@ export const getAllMedia = catchAsync(
       .limit()
       .pagination();
     const media = await feature.query;
-    if (!media.length)
-      return next(new AppError("can't find media related files", 404));
+    /* const media = await cloudinary.api.resources(
+      { type: 'upload', resource_type: 'image', max_results: 500 }, // Filter for images
+      (error, result) => {
+        if (error) {
+          console.error('Error fetching images:', error);
+        } else {
+          console.log('Images:', result.resources);
+        }
+      }
+    ); */
+    if(!media)return next(new AppError("can't find media related files", 404));
     res.status(200).json({
       status: "success",
       numMedia: media.length,
-      data: {
+      
         media,
-      },
     });
   },
 );

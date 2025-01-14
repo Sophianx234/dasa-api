@@ -14,7 +14,7 @@ dotenv.config();
 
 async function importData() {
   try {
-     await User.create(users);
+    //  await User.create(users);
      await Product.create(products)
      await Media.create(media)
      await Message.create(messages)

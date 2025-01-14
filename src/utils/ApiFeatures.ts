@@ -55,7 +55,7 @@ export class ApiFeatures<T> {
         : this.queryStr.fileType;
       console.log(this.queryStr.fileType);
       console.log(searchField);
-      this.query = this.query.find({ fileType: searchField });
+      this.query = this.query.find({ resource_type: searchField });
     }
     return this;
   }
