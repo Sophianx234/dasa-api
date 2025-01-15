@@ -1,8 +1,8 @@
 import dotenv from "dotenv";
 import { users } from "./user";
 import { products } from "./products";
-import {media} from './media'
 import mongoose from "mongoose";
+import {media} from './media'
 import User from "../models/userModel";
 import { Product } from "../models/productModel";
 import { Media } from "../models/mediaModel";

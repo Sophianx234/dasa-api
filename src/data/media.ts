@@ -1,4 +1,4 @@
-const media =  [
+export const media =  [
                 {
                     "asset_id": "5de792c8e74b7ae0ec1786cb46617e9e",
                     "public_id": "Dasa/media/images/yc3khxqrildw0nfhfynz",
