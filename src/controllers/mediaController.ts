@@ -18,6 +18,7 @@ export const uploadMediaToCloud = catchAsync(
     const uploadResults = await uploadImages(req, "Dasa/media");
     if (!uploadResults)
       return next(new AppError("please select images to be uploaded", 400));
+    console.log('uploaded Media: ',uploadResults)
     uploadResults?.map(async (result) => {
       await Media.create(result);
     });
@@ -31,7 +32,7 @@ export const uploadMediaToCloud = catchAsync(
 export const getAllMedia = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
     console.log(req.query);
-    const feature = new ApiFeatures(req.query, Media?.find())
+    const feature = new ApiFeatures(req.query, Media?.find().sort({_id: -1}))
       .search()
       .filter()
       .sort()
