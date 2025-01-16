@@ -4,12 +4,14 @@ import Message from "../models/messagesModel";
 import { ApiFeatures } from "../utils/ApiFeatures";
 import { AppError } from "../utils/AppError";
 import { catchAsync } from "../utils/catchAsync";
+import { RequestExtended } from "./authController";
 
 export const sendMessage = catchAsync(
-  async (req: Request, res: Response, next: NextFunction) => {
+  async (req: RequestExtended, res: Response, next: NextFunction) => {
     const { content } = req.body;
     console.log(content);
     const { senderId: sender, recipientId: recipient } = req.params;
+    req.params.senderId = req?.user?.id
     if (
       !mongoose.Types.ObjectId.isValid(sender) ||
       !mongoose.Types.ObjectId.isValid(recipient)
@@ -46,3 +48,7 @@ export const getAllMessages = catchAsync(
     });
   },
 );
+
+export const sendAnonymous = catchAsync(async(req:RequestExtended,res:Response,next:NextFunction)=>{
+  
+})

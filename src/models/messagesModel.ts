@@ -1,7 +1,14 @@
 import { NextFunction } from "express";
-import mongoose, { CallbackError } from "mongoose";
+import mongoose, { CallbackError, mongo } from "mongoose";
 
-const messagesSchema = new mongoose.Schema(
+export type messagesDocument = Document & {
+  sender: mongoose.Types.ObjectId,
+  recipient: mongoose.Types.ObjectId,
+  messageType: 'file'| 'text',
+  content: string,
+  fileURL: string
+}
+const messagesSchema = new mongoose.Schema<messagesDocument>(
   {
     sender: {
       type: mongoose.Schema.Types.ObjectId, // Reference to the User model
@@ -10,25 +17,27 @@ const messagesSchema = new mongoose.Schema(
     },
     recipient: {
       type: mongoose.Schema.Types.ObjectId, // Reference to the User model
-      required: true,
+      
       ref: "User",
+    },
+    messageType: {
+      type: String,
+      enum: ["text", "file"],
+      required: true,
     },
     content: {
       type: String,
-      required: true, // The actual text message
-      trim: true,
+      required: function (this: messagesDocument) {
+        return this.messageType === "text";
+      },
     },
-    timestamp: {
-      type: Date,
-      default: Date.now, // Message sent timestamp
-    },
-    status: {
+    fileURL: {
       type: String,
-      enum: ["sent", "delivered", "read"],
-      default: "sent", // Status of the message
+      required: function (this: messagesDocument) {
+        return this.messageType === "file";
+      },
     },
-  },
-  { timestamps: true },
+  { timestamps: true }
 );
 
 
