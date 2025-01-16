@@ -31,4 +31,6 @@ const AnonymousSchema = new Schema<AnonymousDocument>(
 );
 
 
-const channel = model<AnonymousDocument>("Channel",AnonymousSchema)
+const Anonymous = model<AnonymousDocument>("Channel",AnonymousSchema)
+
+export default Anonymous
