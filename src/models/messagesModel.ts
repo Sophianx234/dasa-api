@@ -36,7 +36,9 @@ const messagesSchema = new mongoose.Schema<messagesDocument>(
       required: function (this: messagesDocument) {
         return this.messageType === "file";
       },
-    },
+    }
+  }
+    ,
   { timestamps: true }
 );
 
