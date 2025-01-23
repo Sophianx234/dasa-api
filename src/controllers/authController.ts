@@ -37,7 +37,7 @@ function signToken(user: userDocument) {
   const expires = process.env.JWT_EXPIRES_IN;
 
   return jwt.sign({ id: user.id }, secret!, {
-    expiresIn: expires,
+    expiresIn: '1d',
   });
 }
 function createSendToken(
@@ -51,7 +51,7 @@ function createSendToken(
 
   res.cookie("jwt", token, {
     secure: process.env.NODE_ENV === "production",
-    expires: new Date(Date.now() + 2 * 60 * 60 * 1000),
+    expires: new Date(Date.now() + 24 * 60 * 60 * 1000),
     httpOnly: true,
     sameSite: process.env.NODE_ENV === 'production'?"none":'lax',
     path: "/",

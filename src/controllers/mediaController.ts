@@ -32,14 +32,14 @@ export const uploadMediaToCloud = catchAsync(
 export const getAllMedia = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
     console.log(req.query);
-    const feature = new ApiFeatures(req.query, Media?.find().sort({ _id: -1 }))
+/*     const feature = new ApiFeatures(req.query, Media?.find().sort({ _id: -1 }))
       .search()
       .filter()
       .sort()
       .limit()
       .pagination();
     const media = await feature.query;
-
+ */
     /* const media = await cloudinary.api.resources(
       { type: 'upload', resource_type: 'image', max_results: 500 }, // Filter for images
       (error, result) => {
@@ -51,10 +51,10 @@ export const getAllMedia = catchAsync(
       }
     ); */
 
-    /* const media = await cloudinary.api.resources({
+    const media = await cloudinary.api.resources({
           resource_type: "video",
           max_results: 50,        // 
-        }) */
+        }) 
     if (!media)
       return next(new AppError("can't find media related files", 404));
     res.status(200).json({
@@ -69,7 +69,7 @@ export const getAllImages = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
     const feature = new ApiFeatures(
       req.query,
-      Media.find({ format: "image" }).sort({ _id: -1 }),
+      Media.find({ format: "jpg" }).sort({ _id: -1 }),
     )
       .filter()
       .sort()
