@@ -1,12 +1,12 @@
 import mongoose, { Schema, SchemaTypes, model } from "mongoose";
 
-type AnonymousDocument = Document & {
+type channelDocument = Document & {
     name: string,
     members: mongoose.Types.ObjectId[]
     messages:mongoose.Types.ObjectId[] 
 } 
 
-const AnonymousSchema = new Schema<AnonymousDocument>(
+const channelSchema = new Schema<channelDocument>(
   {
     name: {
       type: String,
@@ -31,6 +31,6 @@ const AnonymousSchema = new Schema<AnonymousDocument>(
 );
 
 
-const Anonymous = model<AnonymousDocument>("Channel",AnonymousSchema)
+const Channel = model<channelDocument>("Channel",channelSchema)
 
-export default Anonymous
+export default Channel
