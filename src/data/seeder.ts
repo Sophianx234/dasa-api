@@ -8,7 +8,8 @@ import { Product } from "../models/productModel";
 import { Media } from "../models/mediaModel";
 import Message from "../models/messagesModel";
 import { messages } from "./messages";
-import Anonymous from "../models/anonymousMessagesModel";
+import Anonymous from "../models/AnonymousModel";
+
 import { anonymous } from "./anonymous";
 dotenv.config();
 
