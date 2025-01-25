@@ -37,7 +37,8 @@ function setUpSocket(server:HttpServer| HttpsServer){
 
     const sendAnonymous = async(message:messageI)=>{
         const {sender,recipient,content,channelId,messageType,fileURL} = message
-        const newMessage = await Message.create({
+        console.log(message)
+        /* const newMessage = await Message.create({
             sender,
             recipient: null,
             content,
@@ -49,7 +50,7 @@ function setUpSocket(server:HttpServer| HttpsServer){
 
         await Channel.findByIdAndUpdate(channelId,{
             $push:{messages: newMessage._id}
-        })
+        }) */
     }
 
     io.on('connect',(socket)=>{
@@ -60,7 +61,7 @@ function setUpSocket(server:HttpServer| HttpsServer){
         }else{
             console.log("UserId wasn't provided during handshake")
         }
-
+        socket.on('anonymous',sendAnonymous)
         socket.on('disconnect',()=>disconnect(socket))
     })
 }
