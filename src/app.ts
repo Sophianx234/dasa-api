@@ -1,19 +1,17 @@
-import express, { NextFunction, Request, Response } from "express";
-import dotenv from "dotenv";
-import morgan from "morgan";
-import cookieparser from "cookie-parser";
-import rateLimit from "express-rate-limit";
-import helmet from "helmet";
-import mongosanitize from "express-mongo-sanitize";
-import hpp from "hpp";
-import cors from "cors";
 import compression from "compression";
+import cookieparser from "cookie-parser";
+import cors from "cors";
+import dotenv from "dotenv";
+import express, { NextFunction, Request, Response } from "express";
+import mongosanitize from "express-mongo-sanitize";
+import helmet from "helmet";
+import hpp from "hpp";
+import morgan from "morgan";
 
 import mediaRoute from "./routes/mediaRoute";
-import usersRoute from "./routes/userRoutes";
 import messagesRoute from "./routes/MessageRoute";
 import productsRoute from "./routes/productsRoute";
-import anonymousRoute from "./routes/anonymousRoute";
+import usersRoute from "./routes/userRoutes";
 import { AppError } from "./utils/AppError";
 import { globalError } from "./utils/globalError";
 
@@ -40,7 +38,7 @@ app.use(
 );
 app.use(helmet());
 if (process.env.NODE_ENV === "development") {
-  app.use(morgan("dev"));
+    app.use(morgan("dev"));
 }
 app.use(cookieparser());
 // app.use("/api", limiter);
@@ -58,7 +56,6 @@ app.use("/api/v1/media", mediaRoute);
 app.use("/api/v1/products", productsRoute);
 app.use("/api/v1/users", usersRoute);
 app.use("/api/v1/messages", messagesRoute);
-app.use("/api/v1/anonymous", anonymousRoute);
 
 app.all("*", function (req: Request, res: Response, next: NextFunction) {
   next(new AppError(`can't find ${req.originalUrl} on this server `, 404));

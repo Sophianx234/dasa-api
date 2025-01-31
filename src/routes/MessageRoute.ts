@@ -1,11 +1,11 @@
 import { Router } from "express";
-import { getAllMessages, sendMessage } from "../controllers/messagesController";
-import { getAllMedia } from "../controllers/mediaController";
+import { protect } from "../controllers/authController";
+import { getAllAnonymous, getAllMessages } from "../controllers/messagesController";
 
 const router = Router()
-
+router.use(protect)
 router.route('/').get(getAllMessages)
-router.route('/:senderId/:recipientId').post(sendMessage)
+router.route('/anonymous').get(getAllAnonymous)
 
 
 export default router

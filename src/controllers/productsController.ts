@@ -9,24 +9,26 @@ import { RequestExtended } from "./authController";
 import { uploadImages } from "../utils/uploadImages";
 
 export const uploadProducts = upload.array("images");
-export const uploadProductsToCloud = 
-  async (req: RequestExtended, res: Response, next: NextFunction) => {
-    const uploadedProducts = await uploadImages(req, "Dasa/products");
-    console.log(uploadedProducts)
-    if (!uploadedProducts)
-      return next(new AppError("could not upload products . Retry", 400));
-    const { id } = req.params;
-    const currentProduct = await Product.findById(id);
-    if (!currentProduct)
-      return next(new AppError("product do not exist ", 404));
-    
-    uploadedProducts.map(async (product) => {
-      currentProduct.images.push(product.secure_url);
-    });
+export const uploadProductsToCloud = async (
+  req: RequestExtended,
+  res: Response,
+  next: NextFunction,
+) => {
+  const uploadedProducts = await uploadImages(req, "Dasa/products");
+  console.log(uploadedProducts);
+  if (!uploadedProducts)
+    return next(new AppError("could not upload products . Retry", 400));
+  const { id } = req.params;
+  const currentProduct = await Product.findById(id);
+  if (!currentProduct) return next(new AppError("product do not exist ", 404));
 
-    await currentProduct.save();
-    next()
-  }
+  uploadedProducts.map(async (product) => {
+    currentProduct.images.push(product.secure_url);
+  });
+
+  await currentProduct.save();
+  next();
+};
 
 export const getAllProducts = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -36,14 +38,15 @@ export const getAllProducts = catchAsync(
       .limit()
       .pagination();
     const products = await features.query;
-    if (!products.length) return next(new AppError("can't find products", 404));
-    res.status(200).json({
-      status: "success",
-      numProducts: products.length,
-      data: {
-        products,
-      },
-    });
+    if (!products) return next(new AppError("can't find products", 404));
+    Array.isArray(products) &&
+      res.status(200).json({
+        status: "success",
+        numProducts: products.length,
+        data: {
+          products,
+        },
+      });
   },
 );
 
@@ -55,14 +58,16 @@ export const getProduct = catchAsync(
       Product.find({ _id: id }),
     ).limit();
     const product = await features.query;
-    if (!product.length)
+    if (!product)
       return next(new AppError("can't find product with that id: ", 404));
-    res.status(200).json({
-      status: "success",
-      data: {
-        product,
-      },
-    });
+
+    Array.isArray(product) &&
+      res.status(200).json({
+        status: "success",
+        data: {
+          product,
+        },
+      });
   },
 );
 

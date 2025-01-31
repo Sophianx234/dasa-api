@@ -3,12 +3,16 @@ import User from "../models/userModel";
 import { Query } from "mongoose";
 import { reqQueryType } from "../controllers/userController";
 
+
 export class ApiFeatures<T> {
   queryStr: Record<string, any>;
-  query: Query<T[], T>;
-  constructor(queryStr: Record<string, any>, query: Query<T[], T>) {
+  query: Query<T|T[], T>;
+  singleResult: boolean
+  
+  constructor(queryStr: Record<string, any>, query: Query<T|T[], T>, singleResult = false) {
     this.queryStr = queryStr;
     this.query = query;
+    this.singleResult = singleResult
   }
   filter() {
     const queryObj = { ...this.queryStr };
@@ -17,8 +21,13 @@ export class ApiFeatures<T> {
     let query;
     let queryStr = JSON.stringify(queryObj);
     queryStr = queryStr.replace(/\b(gte|gt|lte|lt)\b/g, (match) => `$${match}`);
+    if(this.singleResult){
+      this.query = this.query.findOne(JSON.parse(queryStr)) as Query<T,T>
+    }else{
 
-    this.query.find(JSON.parse(queryStr));
+      this.query = this.query.find(JSON.parse(queryStr)) as Query<T[],T>;
+    }
+
     return this;
   }
   sort() {

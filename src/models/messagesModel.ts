@@ -6,13 +6,13 @@ export type messagesDocument = Document & {
   recipient: mongoose.Types.ObjectId,
   messageType: 'file'| 'text',
   content: string,
-  fileURL: string
+  fileURL: string,
+  
 }
 const messagesSchema = new mongoose.Schema<messagesDocument>(
   {
     sender: {
       type: mongoose.Schema.Types.ObjectId, // Reference to the User model
-      required: true,
       ref: "User",
     },
     recipient: {
@@ -25,6 +25,7 @@ const messagesSchema = new mongoose.Schema<messagesDocument>(
       enum: ["text", "file"],
       required: true,
     },
+    
     content: {
       type: String,
       required: function (this: messagesDocument) {
