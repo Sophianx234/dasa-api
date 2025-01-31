@@ -9,6 +9,7 @@ interface messageI {
   //   sender: string;
   //   recipient: string;
   content: string;
+  userId: string;
   //   channelId: string;
   //   messageType: "File" | "Text";
   //   fileURL: string;
@@ -37,19 +38,20 @@ function setUpSocket(server: HttpServer | HttpsServer) {
   const sendAnonymous = async (message: messageI) => {
     console.log("Boruto Uzumaki");
     // io.emit('anonymous',"Hello Bro")
-    console.log(message);
-    const { content } = message;
+
+    const { content, userId } = message;
     // channelId:  ,
+    console.log(message);
 
     const newMessage = await Message.create({
-      sender: undefined,
+      sender: userId,
       recipient: undefined,
       content,
       messageType: "text",
-    })
+    });
 
     console.log("newMessage: ", newMessage);
-/* 
+    /* 
 {
     name: {
       type: String,
@@ -71,16 +73,19 @@ function setUpSocket(server: HttpServer | HttpsServer) {
       },
     ],
   }, */
-  
-    if(!newMessage.sender && !newMessage.recipient){
-      const anonymousChannel = await Channel.findOneAndUpdate({
-        name: 'anonymous'},{
-          $push: {messages:newMessage._id}
-        })
-        
-        console.log('any',newMessage)
-        io.to('anonymous').emit('recieveAnonymous',newMessage)
-        
+
+    if (newMessage.sender && !newMessage.recipient) {
+      const anonymousChannel = await Channel.findOneAndUpdate(
+        {
+          name: "anonymous",
+        },
+        {
+          $push: { messages: newMessage._id },
+        },
+      );
+
+      // console.log('any',newMessage)
+      io.to("anonymous").emit("recieveAnonymous", newMessage);
     }
     /*await Channel.findByIdAndUpdate(channelId,{
             $push:{messages: newMessage._id}
@@ -93,7 +98,7 @@ function setUpSocket(server: HttpServer | HttpsServer) {
     if (userId) {
       userSocketMap.set(userId, socket.id);
       console.log(`User ${userId} connected with ${socket.id}`);
-      socket.join('anonymous')
+      socket.join("anonymous");
     } else {
       console.log("UserId wasn't provided during handshake");
     }
