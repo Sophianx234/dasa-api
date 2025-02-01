@@ -26,7 +26,7 @@ function setUpSocket(server: HttpServer | HttpsServer) {
   const userSocketMap = new Map();
   console.log(userSocketMap);
   function disconnect(socket: Socket) {
-    console.log(`Client ${socket.id}disconnected `);
+    console.log(`Client ${socket.id} disconnected `);
     for (const [userId, socketId] of userSocketMap.entries()) {
       if (socketId === socket.id) {
         userSocketMap.delete(userId);
