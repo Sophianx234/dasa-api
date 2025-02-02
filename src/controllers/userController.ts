@@ -1,6 +1,5 @@
 import { NextFunction, Request, Response } from "express";
 import fs from "fs";
-import path from "path";
 import cloudinary from "../middleware/cloudinary";
 import User from "../models/userModel";
 import { ApiFeatures } from "../utils/ApiFeatures";
@@ -15,7 +14,7 @@ export type reqQueryType = string | string[] | null;
 export const resizeUserPhoto = catchAsync(
   async (req: RequestExtended, res: Response, next: NextFunction) => {
     if (req.file) {
-      const image = req.file.path
+      const image = req.file.path;
 
       console.log("image", image);
 
@@ -38,8 +37,8 @@ export const resizeUserPhoto = catchAsync(
     }
 
     res.status(200).json({
-      status: 'success',
-    })
+      status: "success",
+    });
   },
 );
 
@@ -52,13 +51,12 @@ export const getAllUsers = catchAsync(
       .pagination();
     const users = await features.query;
     if (!users) return next(new AppError("can't find users", 404));
-    Array.isArray(users)&&res.status(200).json({
-      status: "success",
-      totalUsers: users.length,
-      data: {
+    Array.isArray(users) &&
+      res.status(200).json({
+        status: "success",
+        totalUsers: users.length,
         users,
-      },
-    });
+      });
   },
 );
 

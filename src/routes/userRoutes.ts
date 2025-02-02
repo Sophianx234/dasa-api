@@ -13,7 +13,7 @@ router.route('/reset-password/:token').patch(resetPassword)
 
 router.use(protect)
 router.route("/getme").get(getUser);
-router.route("/").get(restrictTo("admin"),getAllUsers);
+router.route("/").get(getAllUsers);
 router.route("/delete-user").delete(deleteUser);
 router.route('/upload').patch(upload.single('image'),resizeUserPhoto)
 router.route("/update-user").patch(updateUser);
