@@ -1,11 +1,11 @@
 import mongoose, { Document } from "mongoose";
 import bcrypt from "bcrypt";
 import { Model } from "mongoose";
-import  crypto from 'crypto'
+import crypto from "crypto";
 export type userDocument = Document & {
   username: string;
-  firstName: string
-  lastName: string
+  firstName: string;
+  lastName: string;
   email: string;
   password: string;
   role?: "user" | "admin" | "guest";
@@ -13,20 +13,22 @@ export type userDocument = Document & {
   hall?: string;
   status?: "active" | "inactive" | "suspended";
   course?: string;
-  active: boolean
+  active: boolean;
   profileImage?: string;
   bio?: string;
+  sex: "male" | "femal";
+  anonymousProfile: string;
   confirmPassword?: string | boolean | null;
   createdAt?: Date;
   passwordChangedAt: Date;
-  passwordResetToken: string |undefined;
-  passwordResetExpires: Date| undefined;
+  passwordResetToken: string | undefined;
+  passwordResetExpires: Date | undefined;
   isCorrectPassword(
     this: userDocument,
     candidatePassword: string,
   ): Promise<boolean>;
   isPasswordChanged(jwtTimestamp: number): boolean;
-  createPasswordResetToken(): string
+  createPasswordResetToken(): string;
 };
 
 type userModel = Model<userDocument>;
@@ -47,9 +49,17 @@ const userSchema = new mongoose.Schema<userDocument>({
   hall: String,
   course: String,
   profileImage: {
-    type:String,
-  default: "https://i.ibb.co/BCqPkTT/default-img.jpg"},
+    type: String,
+    default: "https://i.ibb.co/BCqPkTT/default-img.jpg",
+  },
   bio: String,
+  sex: {
+    type: String,
+  },
+  anonymousProfile:{
+    type:String,
+    
+  },
 
   status: {
     type: String,
@@ -58,7 +68,7 @@ const userSchema = new mongoose.Schema<userDocument>({
   },
   active: {
     type: Boolean,
-    default: true
+    default: true,
   },
   confirmPassword: {
     type: String,
@@ -93,14 +103,17 @@ userSchema.pre("save", async function (this: userDocument, next) {
   next();
 });
 
-userSchema.pre(/^find/,function(this:any,next){
+userSchema.pre(/^find/, function (this: any, next) {
   this.find({ active: { $ne: false } });
   next();
-})
-userSchema.pre('save',function(this:userDocument,next){
-  this.username = `${this.firstName} ${this.lastName}`
-  next()
-})
+});
+userSchema.pre("save", function (this: userDocument, next) {
+  this.username = `${this.firstName} ${this.lastName}`;
+    this.anonymousProfile = this.sex === 'male'? "https://res.cloudinary.com/dtytb8qrc/image/upload/v1738576015/Dasa/users/bwg76dwwvyte11f71jah.jpg" : "https://res.cloudinary.com/dtytb8qrc/image/upload/v1738576016/Dasa/users/ocmq2tel9kfwdb5ew6ej.jpg"
+
+  
+  next();
+});
 
 userSchema.methods.isCorrectPassword = async function (
   this: userDocument,
@@ -120,15 +133,16 @@ userSchema.methods.isPasswordChanged = async function (
   return false;
 };
 
-userSchema.methods.createPasswordResetToken = function(this:userDocument){
-  const resetToken = crypto.randomBytes(32).toString('hex')
-  this.passwordResetToken = crypto.createHash('sha256').update(resetToken).digest('hex')
+userSchema.methods.createPasswordResetToken = function (this: userDocument) {
+  const resetToken = crypto.randomBytes(32).toString("hex");
+  this.passwordResetToken = crypto
+    .createHash("sha256")
+    .update(resetToken)
+    .digest("hex");
 
-  this.passwordResetExpires = new Date(Date.now()+ 10*60*1000)
-  return resetToken
-
-
-}
+  this.passwordResetExpires = new Date(Date.now() + 10 * 60 * 1000);
+  return resetToken;
+};
 const User = mongoose.model<userDocument>("User", userSchema);
 
 export default User;
