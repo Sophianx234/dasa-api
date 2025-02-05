@@ -4,12 +4,14 @@ import { Server, Socket } from "socket.io";
 import Message from "./models/messagesModel";
 import Channel from "./models/channelModel";
 import { ObjectId } from "mongodb";
+import User from "./models/userModel";
 
 interface messageI {
   //   sender: string;
   //   recipient: string;
   content: string;
   userId: string;
+  anonymousName: string;
   //   channelId: string;
   //   messageType: "File" | "Text";
   //   fileURL: string;
@@ -42,11 +44,13 @@ function setUpSocket(server: HttpServer | HttpsServer) {
     const { content, userId } = message;
     // channelId:  ,
     console.log(message);
+    const user = await  User.findById(userId)
 
     const newMessage = await Message.create({
       sender: userId,
       recipient: undefined,
       content,
+      anonymousName: user?.anonymousName,
       messageType: "text",
     });
 

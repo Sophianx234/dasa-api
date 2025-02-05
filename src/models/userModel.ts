@@ -2,6 +2,7 @@ import mongoose, { Document } from "mongoose";
 import bcrypt from "bcrypt";
 import { Model } from "mongoose";
 import crypto from "crypto";
+import { genRandomName } from "../utils/helpers";
 export type userDocument = Document & {
   username: string;
   firstName: string;
@@ -17,6 +18,7 @@ export type userDocument = Document & {
   profileImage?: string;
   bio?: string;
   sex: "male" | "femal";
+  anonymousName: string;
   anonymousProfile: string;
   confirmPassword?: string | boolean | null;
   createdAt?: Date;
@@ -53,12 +55,11 @@ const userSchema = new mongoose.Schema<userDocument>({
     default: "https://i.ibb.co/BCqPkTT/default-img.jpg",
   },
   bio: String,
-  sex: {
+  anonymousName:String,
+
+  sex:String,
+  anonymousProfile: {
     type: String,
-  },
-  anonymousProfile:{
-    type:String,
-    
   },
 
   status: {
@@ -109,9 +110,12 @@ userSchema.pre(/^find/, function (this: any, next) {
 });
 userSchema.pre("save", function (this: userDocument, next) {
   this.username = `${this.firstName} ${this.lastName}`;
-    this.anonymousProfile = this.sex === 'male'? "https://res.cloudinary.com/dtytb8qrc/image/upload/v1738576015/Dasa/users/bwg76dwwvyte11f71jah.jpg" : "https://res.cloudinary.com/dtytb8qrc/image/upload/v1738576016/Dasa/users/ocmq2tel9kfwdb5ew6ej.jpg"
+  this.anonymousProfile =
+    this.sex === "male"
+      ? "https://res.cloudinary.com/dtytb8qrc/image/upload/v1738576015/Dasa/users/bwg76dwwvyte11f71jah.jpg"
+      : "https://res.cloudinary.com/dtytb8qrc/image/upload/v1738576016/Dasa/users/ocmq2tel9kfwdb5ew6ej.jpg";
+      this.anonymousName = genRandomName()
 
-  
   next();
 });
 

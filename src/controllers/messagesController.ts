@@ -35,7 +35,7 @@ export const getAllMessages = catchAsync(
 export const getAllAnonymous = catchAsync(async(req:Request,res:Response,next:NextFunction)=>{
   
   
-  const feature  = new ApiFeatures(req.query,Channel.findOne({name:'anonymous'}).populate('messages','content sender createdAt'),true).filter().sort().limit()
+  const feature  = new ApiFeatures(req.query,Channel.findOne({name:'anonymous'}).populate('messages','content anonymousName sender createdAt'),true).filter().sort().limit()
   const anonymous = await feature.query
   res.status(200).json({
     status: 'success',

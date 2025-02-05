@@ -5,6 +5,7 @@ export type messagesDocument = Document & {
   sender: mongoose.Types.ObjectId,
   recipient: mongoose.Types.ObjectId,
   messageType: 'file'| 'text',
+  anonymousName: string
   content: string,
   fileURL: string,
   
@@ -20,6 +21,7 @@ const messagesSchema = new mongoose.Schema<messagesDocument>(
       
       ref: "User",
     },
+    anonymousName:String,
     messageType: {
       type: String,
       enum: ["text", "file"],

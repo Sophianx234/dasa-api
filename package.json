@@ -67,6 +67,7 @@
     "sharp": "^0.33.5",
     "socket.io": "^4.8.1",
     "tsx": "^4.19.2",
+    "unique-names-generator": "^4.7.1",
     "xss-clean": "^0.1.4"
   }
 }

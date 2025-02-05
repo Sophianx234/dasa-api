@@ -76,6 +76,7 @@ export const signup = catchAsync(
       hall,
       course,
       confirmPassword,
+      sex
     } = req.body;
     const feature = new ApiCRUD(
       {
@@ -88,6 +89,7 @@ export const signup = catchAsync(
         contact,
         hall,
         course,
+        sex
       },
       User,
     );

@@ -100,6 +100,7 @@ export const updateUser = catchAsync(
       "hall",
       "course",
       "contact",
+      "sex"
     );
 
     const updatedUser = await User.findByIdAndUpdate(
