@@ -9,4 +9,4 @@ export function genRandomName (){
     }
     return  uniqueNamesGenerator(customConfig).replace("_",'') + Math.floor(Math.random()*100)
 
-  } 
+  }

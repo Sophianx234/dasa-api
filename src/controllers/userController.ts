@@ -60,7 +60,7 @@ export const getAllUsers = catchAsync(
   },
 );
 
-export const getUser = catchAsync(
+export const getMe = catchAsync(
   async (req: RequestExtended, res: Response, next: NextFunction) => {
     req.params.id = req.user?.id;
     const user = await User.findById(req.params.id);
@@ -72,6 +72,18 @@ export const getUser = catchAsync(
     });
   },
 );
+
+export const getUser = catchAsync(async(req:Request,res:Response,next:NextFunction)=>{
+  const {id} = req.params
+  if(!id) return next(new AppError('Could not find Id',404))
+    const user = await User.findById(id)
+  if(!user) return next(new AppError('Could not find user with specified ID:',400))
+
+    res.status(200).json({
+      status:'success',
+      user
+    })
+})
 
 export const deleteUser = catchAsync(
   async (req: RequestExtended, res: Response, next: NextFunction) => {
