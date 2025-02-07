@@ -28,6 +28,7 @@ const messagesSchema = new mongoose.Schema<messagesDocument>(
       required: true,
     },
     
+    
     content: {
       type: String,
       required: function (this: messagesDocument) {

@@ -44,13 +44,12 @@ function setUpSocket(server: HttpServer | HttpsServer) {
     const { content, userId } = message;
     // channelId:  ,
     console.log(message);
-    const user = await  User.findById(userId)
+    const user = await User.findById(userId);
 
     const newMessage = await Message.create({
       sender: userId,
       recipient: undefined,
       content,
-      anonymousName: user?.anonymousName,
       messageType: "text",
     });
 
@@ -87,9 +86,11 @@ function setUpSocket(server: HttpServer | HttpsServer) {
           $push: { messages: newMessage._id },
         },
       );
+      const populatedMessage = await Message.findById(newMessage.id).populate("sender", 'profileName anonymousName anonymousProfile')
 
-      // console.log('any',newMessage)
-      io.to("anonymous").emit("recieveAnonymous", newMessage);
+
+
+      io.to("anonymous").emit("recieveAnonymous", populatedMessage);
     }
     /*await Channel.findByIdAndUpdate(channelId,{
             $push:{messages: newMessage._id}
