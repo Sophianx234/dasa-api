@@ -36,9 +36,14 @@ export const getMessages = catchAsync(
     if (!senderId && !recipientId)
       return next(new AppError("both sender and recipient Id required", 404));
     const messages = await Message.find({
-      sender: senderId,
-      recipient: recipientId,
-    });
+      $or: [
+        {sender: senderId,
+          recipient: recipientId},
+        {sender: recipientId,
+          recipient: senderId}
+      ]
+    }).sort({createdAt: 1});
+    
     if (!messages)
       return next(
         new AppError("could not find messages related to users", 400),
