@@ -5,10 +5,11 @@ import Message from "./models/messagesModel";
 import Channel from "./models/channelModel";
 import { ObjectId } from "mongodb";
 import User from "./models/userModel";
+import { catchAsync } from "./utils/catchAsync";
+import { NextFunction } from "express";
 
 interface messageI {
-  //   sender: string;
-  //   recipient: string;
+    recipientId: string;
   content: string;
   userId: string;
   anonymousName: string;
@@ -38,13 +39,8 @@ function setUpSocket(server: HttpServer | HttpsServer) {
   }
 
   const sendAnonymous = async (message: messageI) => {
-    console.log("Boruto Uzumaki");
-    // io.emit('anonymous',"Hello Bro")
 
     const { content, userId } = message;
-    // channelId:  ,
-    console.log(message);
-    const user = await User.findById(userId);
 
     const newMessage = await Message.create({
       sender: userId,
@@ -53,29 +49,7 @@ function setUpSocket(server: HttpServer | HttpsServer) {
       messageType: "text",
     });
 
-    console.log("newMessage: ", newMessage);
-    /* 
-{
-    name: {
-      type: String,
-      required: true,
-    },
-
-    members: [
-      {
-        type: SchemaTypes.ObjectId,
-        ref: "User",
-        required: true,
-      },
-    ],
     
-    messages: [
-      {
-        type: SchemaTypes.ObjectId,
-        ref: "Message",
-      },
-    ],
-  }, */
 
     if (newMessage.sender && !newMessage.recipient) {
       const anonymousChannel = await Channel.findOneAndUpdate(
@@ -88,15 +62,29 @@ function setUpSocket(server: HttpServer | HttpsServer) {
       );
       const populatedMessage = await Message.findById(newMessage.id).populate("sender", 'profileName anonymousName anonymousProfile')
 
-
-
       io.to("anonymous").emit("recieveAnonymous", populatedMessage);
-    }
-    /*await Channel.findByIdAndUpdate(channelId,{
-            $push:{messages: newMessage._id}
-        }) */
-  };
 
+
+    }
+    
+  };
+  const sendMessage = async(message:messageI)=>{
+    const {userId,recipientId,content} = message
+
+    const newMessage = await Message.create({
+      sender: userId,
+      recipient: recipientId,
+      content,
+      messageType: 'text'
+    })
+
+    console.log('test',newMessage)
+    if(newMessage.sender && newMessage.recipient){
+      io.to(recipientId).emit('recieveMessage',newMessage)
+      io.to(userId).emit('recieveMessage',newMessage)
+    }
+
+  }
   io.on("connect", (socket) => {
     console.log("user Connected");
     const { userId } = socket.handshake.query;
@@ -108,6 +96,7 @@ function setUpSocket(server: HttpServer | HttpsServer) {
       console.log("UserId wasn't provided during handshake");
     }
     socket.on("anonymous", sendAnonymous);
+    socket.on("message", sendMessage);
     socket.on("disconnect", () => disconnect(socket));
   });
 }
