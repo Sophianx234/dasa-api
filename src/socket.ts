@@ -79,6 +79,7 @@ function setUpSocket(server: HttpServer | HttpsServer) {
     })
 
     console.log('test',newMessage)
+    console.log('recipient',recipientId)
     if(newMessage.sender && newMessage.recipient){
       io.to(recipientId).emit('recieveMessage',newMessage)
       io.to(userId).emit('recieveMessage',newMessage)
@@ -95,7 +96,7 @@ function setUpSocket(server: HttpServer | HttpsServer) {
     } else {
       console.log("UserId wasn't provided during handshake");
     }
-    socket.on("anonymous", sendAnonymous);
+    // socket.on("anonymous", sendAnonymous);
     socket.on("message", sendMessage);
     socket.on("disconnect", () => disconnect(socket));
   });

@@ -7,6 +7,7 @@ router.use(protect)
 router.route('/').get(getAllMessages)
 router.route('/:senderId/:recipientId').get(getMessages)
 router.route('/anonymous').get(getAllAnonymous)
+router.route('/message').get(getAllAnonymous)
 
 
 export default router

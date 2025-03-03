@@ -79,3 +79,8 @@ export const getAllAnonymous = catchAsync(
     });
   },
 );
+
+
+const getDirectMessage = catchAsync(async(req:Request,res:Response,next:NextFunction)=>{
+  
+})
