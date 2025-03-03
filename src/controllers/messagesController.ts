@@ -81,6 +81,14 @@ export const getAllAnonymous = catchAsync(
 );
 
 
-const getDirectMessage = catchAsync(async(req:Request,res:Response,next:NextFunction)=>{
-  
+export const getDirectMessage = catchAsync(async(req:RequestExtended,res:Response,next:NextFunction)=>{
+  const {recipientId} = req.params
+
+  console.log(recipientId)
+  console.log('sender',req?.user?._id)
+  const message = await Message.find({$or:[{recipient:recipientId,sender:req?.user?._id},{recipient:req?.user?._id,sender:recipientId}]})
+  res.status(200).json({
+    status: 'success',
+    message
+  })
 })
