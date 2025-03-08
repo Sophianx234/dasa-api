@@ -9,7 +9,7 @@ import { catchAsync } from "./utils/catchAsync";
 import { NextFunction } from "express";
 
 interface messageI {
-    recipientId: string;
+  recipientId: string;
   content: string;
   userId: string;
   anonymousName: string;
@@ -71,18 +71,32 @@ function setUpSocket(server: HttpServer | HttpsServer) {
   const sendMessage = async(message:messageI)=>{
     const {userId,recipientId,content} = message
 
-    const newMessage = await Message.create({
+    let newMessage = await Message.create({
       sender: userId,
       recipient: recipientId,
       content,
       messageType: 'text'
     })
+    newMessage = await newMessage.populate([{
+      path: 'sender',
+      select: 'profileImage firstName'
+    },{
+      path: 'recipient',
+      select: 'profileImage firstName'
+    }])
+
+    
+
+    const sender = userSocketMap.get(message?.userId)
+    const reciever = userSocketMap.get(message.recipientId)
+    console.log('senderId XXX',sender)
+    console.log('senderId yyy',reciever)
 
     console.log('test',newMessage)
     console.log('recipient',recipientId)
     if(newMessage.sender && newMessage.recipient){
-      io.to(recipientId).emit('recieveMessage',newMessage)
-      io.to(userId).emit('recieveMessage',newMessage)
+      io.to(reciever).emit('recieveMessage',newMessage)
+      io.to(sender).emit('recieveMessage',newMessage)
     }
 
   }
