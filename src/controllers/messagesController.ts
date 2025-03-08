@@ -8,6 +8,7 @@ import { RequestExtended } from "./authController";
 import { channel } from "diagnostics_channel";
 import Channel from "../models/channelModel";
 import { Query } from "mongoose";
+import path from "path";
 
 export const getAllMessages = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -32,24 +33,25 @@ export const getAllMessages = catchAsync(
 
 export const getMessages = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
-    const { senderId, recipientId } = req.params;
+    
+    const senderId  = new mongoose.Types.ObjectId(req.params.senderId)
+    const recipientId = new mongoose.Types.ObjectId(req.params.recipientId)
     if (!senderId && !recipientId)
       return next(new AppError("both sender and recipient Id required", 404));
     const messages = await Message.find({
       $or: [
-        {sender: senderId,
+        {sender: senderId ,
           recipient: recipientId},
         {sender: recipientId,
           recipient: senderId}
       ]
-    }).sort({createdAt: 1});
+    }).sort({createdAt: 1}).populate('sender recipient','');
     
     if (!messages)
       return next(
         new AppError("could not find messages related to users", 400),
       );
     res.status(200).json({
-      status: "success",
       messages,
     });
   },
@@ -86,9 +88,13 @@ export const getDirectMessage = catchAsync(async(req:RequestExtended,res:Respons
 
   console.log(recipientId)
   console.log('sender',req?.user?._id)
-  const message = await Message.find({$or:[{recipient:recipientId,sender:req?.user?._id},{recipient:req?.user?._id,sender:recipientId}]})
+  const messages = await Message.find({$or:[{recipient:recipientId,sender:req?.user?._id},{recipient:req?.user?._id,sender:recipientId}]}).sort({createdAt:1}).populate([{path:'sender',
+    select: 'firstName profileImage'
+  },
+  {path:'recipient',
+    select: 'firstName profileImage'
+  }])
   res.status(200).json({
-    status: 'success',
-    message
+    messages
   })
 })
