@@ -48,6 +48,7 @@ function setUpSocket(server: HttpServer | HttpsServer) {
       content,
       messageType: "text",
     });
+    console.log('xxyy',newMessage)
 
     
 
@@ -89,8 +90,6 @@ function setUpSocket(server: HttpServer | HttpsServer) {
 
     const sender = userSocketMap.get(message?.userId)
     const reciever = userSocketMap.get(message.recipientId)
-    console.log('senderId XXX',sender)
-    console.log('senderId yyy',reciever)
 
     console.log('test',newMessage)
     console.log('recipient',recipientId)
@@ -110,7 +109,7 @@ function setUpSocket(server: HttpServer | HttpsServer) {
     } else {
       console.log("UserId wasn't provided during handshake");
     }
-    // socket.on("anonymous", sendAnonymous);
+    socket.on("anonymous", sendAnonymous);
     socket.on("message", sendMessage);
     socket.on("disconnect", () => disconnect(socket));
   });
