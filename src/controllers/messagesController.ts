@@ -9,7 +9,8 @@ import { channel } from "diagnostics_channel";
 import Channel from "../models/channelModel";
 import { Query } from "mongoose";
 import path from "path";
-
+import cloudinary from "../middleware/cloudinary";
+import fs from 'fs'
 export const getAllMessages = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
     const feature = new ApiFeatures(req.query, Message.find())
@@ -57,8 +58,42 @@ export const getMessages = catchAsync(
   },
 );
 
+export const handlefileUpload = catchAsync(async(req:RequestExtended,res:Response,next:NextFunction)=>{
+  if(req.file){
+    const image = req.file.path
+    const uploadResult = await cloudinary.uploader
+            .upload(image, {
+              folder: "Dasa/chat/anonymous",
+              public_id: req.user?.id,
+              overwrite: true,
+              use_filename: true,
+              unique_filename: true,
+            })
+            .catch((error) => {
+              console.log(error);
+            });
+          fs.unlinkSync(image);
+    
+
+          if(!uploadResult) return next(new AppError('could not upload file',404))
+
+            res.status(200).json({
+              status:"success",
+              uploadResult
+            })
+  }
+
+  
+
+  
+  
+
+})
+
 export const getAllAnonymous = catchAsync(
-  async (req: Request, res: Response, next: NextFunction) => {
+  
+  async (req: RequestExtended, res: Response, next: NextFunction) => {
+
     const feature = new ApiFeatures(
       req.query,
       Channel.findOne({ name: "anonymous" }).populate({
