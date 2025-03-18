@@ -80,7 +80,7 @@ export const handlefileUpload = catchAsync(
         sender: req.user?._id,
         recipient: undefined,
         messageType: "file",
-        content: undefined,
+        content: req.body.content ,
         fileURL: uploadResult.secure_url,
       });
 

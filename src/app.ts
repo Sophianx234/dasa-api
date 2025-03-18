@@ -29,13 +29,13 @@ const app = express();
 //   message: "Too many request from this IP, please try again in an hour!",
 // });
 
-/* app.use(
+ app.use(
   cors({
     origin: ['http://localhost:5173','https://dasaug.netlify.app'],
     credentials: true,
 
   })
-); */
+); *
 app.use(helmet());
 if (process.env.NODE_ENV === "development") {
     app.use(morgan("dev"));
