@@ -10,7 +10,7 @@ import Channel from "../models/channelModel";
 import { Query } from "mongoose";
 import path from "path";
 import cloudinary from "../middleware/cloudinary";
-import fs from 'fs'
+import fs from "fs";
 export const getAllMessages = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
     const feature = new ApiFeatures(req.query, Message.find())
@@ -34,20 +34,19 @@ export const getAllMessages = catchAsync(
 
 export const getMessages = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
-    
-    const senderId  = new mongoose.Types.ObjectId(req.params.senderId)
-    const recipientId = new mongoose.Types.ObjectId(req.params.recipientId)
+    const senderId = new mongoose.Types.ObjectId(req.params.senderId);
+    const recipientId = new mongoose.Types.ObjectId(req.params.recipientId);
     if (!senderId && !recipientId)
       return next(new AppError("both sender and recipient Id required", 404));
     const messages = await Message.find({
       $or: [
-        {sender: senderId ,
-          recipient: recipientId},
-        {sender: recipientId,
-          recipient: senderId}
-      ]
-    }).sort({createdAt: 1}).populate('sender recipient','');
-    
+        { sender: senderId, recipient: recipientId },
+        { sender: recipientId, recipient: senderId },
+      ],
+    })
+      .sort({ createdAt: 1 })
+      .populate("sender recipient", "");
+
     if (!messages)
       return next(
         new AppError("could not find messages related to users", 400),
@@ -58,42 +57,55 @@ export const getMessages = catchAsync(
   },
 );
 
-export const handlefileUpload = catchAsync(async(req:RequestExtended,res:Response,next:NextFunction)=>{
-  if(req.file){
-    const image = req.file.path
-    const uploadResult = await cloudinary.uploader
-            .upload(image, {
-              folder: "Dasa/chat/anonymous",
-              public_id: req.user?.id,
-              overwrite: true,
-              use_filename: true,
-              unique_filename: true,
-            })
-            .catch((error) => {
-              console.log(error);
-            });
-          fs.unlinkSync(image);
-    
+export const handlefileUpload = catchAsync(
+  async (req: RequestExtended, res: Response, next: NextFunction) => {
+    if (req.file) {
+      const image = req.file.path;
+      const uploadResult = await cloudinary.uploader
+        .upload(image, {
+          folder: "Dasa/chat/anonymous",
+          public_id: req.user?.id,
+          overwrite: true,
+          use_filename: true,
+          unique_filename: true,
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+      fs.unlinkSync(image);
 
-          if(!uploadResult) return next(new AppError('could not upload file',404))
+      if (!uploadResult)
+        return next(new AppError("could not upload file", 404));
+      const newMessage = await Message.create({
+        sender: req.user?._id,
+        recipient: undefined,
+        messageType: "file",
+        content: undefined,
+        fileURL: uploadResult.secure_url,
+      });
 
-            res.status(200).json({
-              status:"success",
-              uploadResult
-            })
-  }
-
-  
-
-  
-  
-
-})
+      const anonymousChannel = await Channel.findOneAndUpdate(
+        {
+          name: "anonymous",
+        },
+        {
+          $push: { messages: newMessage._id },
+        },
+      );
+      const populatedMessage = await Message.findById(newMessage.id).populate(
+        "sender",
+        "profileName anonymousName anonymousProfile",
+      );
+      res.status(200).json({
+        status: "success",
+        populatedMessage,
+      });
+    }
+  },
+);
 
 export const getAllAnonymous = catchAsync(
-  
   async (req: RequestExtended, res: Response, next: NextFunction) => {
-
     const feature = new ApiFeatures(
       req.query,
       Channel.findOne({ name: "anonymous" }).populate({
@@ -117,19 +129,25 @@ export const getAllAnonymous = catchAsync(
   },
 );
 
+export const getDirectMessage = catchAsync(
+  async (req: RequestExtended, res: Response, next: NextFunction) => {
+    const { recipientId } = req.params;
 
-export const getDirectMessage = catchAsync(async(req:RequestExtended,res:Response,next:NextFunction)=>{
-  const {recipientId} = req.params
-
-  console.log(recipientId)
-  console.log('sender',req?.user?._id)
-  const messages = await Message.find({$or:[{recipient:recipientId,sender:req?.user?._id},{recipient:req?.user?._id,sender:recipientId}]}).sort({createdAt:1}).populate([{path:'sender',
-    select: 'firstName profileImage'
+    console.log(recipientId);
+    console.log("sender", req?.user?._id);
+    const messages = await Message.find({
+      $or: [
+        { recipient: recipientId, sender: req?.user?._id },
+        { recipient: req?.user?._id, sender: recipientId },
+      ],
+    })
+      .sort({ createdAt: 1 })
+      .populate([
+        { path: "sender", select: "firstName profileImage" },
+        { path: "recipient", select: "firstName profileImage" },
+      ]);
+    res.status(200).json({
+      messages,
+    });
   },
-  {path:'recipient',
-    select: 'firstName profileImage'
-  }])
-  res.status(200).json({
-    messages
-  })
-})
+);
