@@ -104,13 +104,53 @@ export const handlefileUpload = catchAsync(
   },
 );
 
+export const handleDMFileUpload = catchAsync(async(req:RequestExtended,res:Response,next:NextFunction)=>{
+  if (req.file) {
+    const date = Date.now()
+    const image = req.file.path;
+    const uploadResult = await cloudinary.uploader
+      .upload(image, {
+        folder: "Dasa/chat/dm",
+        public_id: `${req.user?.id}-${date}`,
+        overwrite: false,
+        use_filename: true,
+        unique_filename: true,
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+    fs.unlinkSync(image);
+
+    if (!uploadResult)
+      return next(new AppError("could not upload file", 404));
+    const newMessage = await Message.create({
+      sender: req.user?._id,
+      recipient: req.params.recipientId,
+      messageType: "file",
+      content: req.body.content ,
+      fileURL: uploadResult.secure_url,
+    });
+
+    
+    const populatedMessage = await Message.findById(newMessage.id).populate(
+      "sender",
+      "profileName anonymousName anonymousProfile",
+    );
+    res.status(200).json({
+      status: "success",
+      populatedMessage,
+    });
+  }
+
+})
+
 export const getAllAnonymous = catchAsync(
   async (req: RequestExtended, res: Response, next: NextFunction) => {
     const feature = new ApiFeatures(
       req.query,
       Channel.findOne({ name: "anonymous" }).populate({
         path: "messages",
-        select: "content anonymousName sender createdAt",
+        select: "content fileURL anonymousName sender createdAt",
         populate: {
           path: "sender",
           select: "anonymousProfile anonymousName",
