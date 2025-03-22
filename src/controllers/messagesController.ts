@@ -97,7 +97,6 @@ export const handlefileUpload = catchAsync(
         "profileName anonymousName anonymousProfile",
       );
       res.status(200).json({
-        status: "success",
         populatedMessage,
       });
     }
@@ -134,10 +133,9 @@ export const handleDMFileUpload = catchAsync(async(req:RequestExtended,res:Respo
     
     const populatedMessage = await Message.findById(newMessage.id).populate(
       "sender",
-      "profileName anonymousName anonymousProfile",
+      "profileName profileImage firstName",
     );
     res.status(200).json({
-      status: "success",
       populatedMessage,
     });
   }
