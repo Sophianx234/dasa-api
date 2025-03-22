@@ -131,9 +131,11 @@ export const handleDMFileUpload = catchAsync(async(req:RequestExtended,res:Respo
     });
 
     
-    const populatedMessage = await Message.findById(newMessage.id).populate(
-      "sender",
-      "profileName profileImage firstName",
+    const populatedMessage = await Message.findById(newMessage.id).populate([
+      {path:"sender",
+      select: "profileName profileImage firstName"},
+      {path:"recipient",
+        select: "profileName profileImage firstName"}]
     );
     res.status(200).json({
       populatedMessage,

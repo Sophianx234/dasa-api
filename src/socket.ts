@@ -17,6 +17,34 @@ interface messageI {
   //   messageType: "File" | "Text";
   //   fileURL: string;
 }
+export type signupCredentials = {
+  firstName: string;
+  lastName: string;
+  email: string;
+  password: string;
+  contact: string;
+  hall?: string;
+  course?: string;
+
+  confirmPassword?: string | boolean | null;
+};
+
+type signupCredentialsExtended = signupCredentials & {
+  username: string;
+  profileImage: string;
+  _id: string;
+  anonymousName: string;
+  anonymousProfile: string;
+}
+ type dmType = {
+  sender: signupCredentialsExtended,
+  recipient: signupCredentialsExtended,
+  messageType: 'text' |'file',
+  content: string,
+  _id: string,
+  createdAt: string;
+  fileURL: string;
+}
 
 function setUpSocket(server: HttpServer | HttpsServer) {
   const io = new Server(server, {
@@ -99,6 +127,19 @@ function setUpSocket(server: HttpServer | HttpsServer) {
     }
 
   }
+  const handleFile = async(data:dmType)=>{
+    console.log('naruto',data)
+    const sender = userSocketMap.get(data.sender._id)
+    if(data.recipient){
+      io.to(sender).emit('recieveFile',data)
+      const recipient = userSocketMap.get(data.recipient._id)
+      io.to(recipient).emit('recieveFile',data)
+
+    }else{
+      io.to('anonymous').emit('recieveFile',data)
+    }
+
+  }
   io.on("connect", (socket) => {
     console.log("user Connected");
     const { userId } = socket.handshake.query;
@@ -111,6 +152,7 @@ function setUpSocket(server: HttpServer | HttpsServer) {
     }
     socket.on("anonymous", sendAnonymous);
     socket.on("message", sendMessage);
+    socket.on("upload", handleFile);
     socket.on("disconnect", () => disconnect(socket));
   });
 }
