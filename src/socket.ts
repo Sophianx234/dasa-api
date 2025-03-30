@@ -35,16 +35,21 @@ type signupCredentialsExtended = signupCredentials & {
   _id: string;
   anonymousName: string;
   anonymousProfile: string;
-}
- type dmType = {
-  sender: signupCredentialsExtended,
-  recipient: signupCredentialsExtended,
-  messageType: 'text' |'file',
-  content: string,
-  _id: string,
+};
+type dmType = {
+  sender: signupCredentialsExtended;
+  recipient: signupCredentialsExtended;
+  messageType: "text" | "file";
+  content: string;
+  _id: string;
   createdAt: string;
   fileURL: string;
-}
+};
+type userIsTypingI = {
+  userInfo: signupCredentialsExtended;
+  type: "direct" | "channel";
+  recipientId: string;
+};
 
 function setUpSocket(server: HttpServer | HttpsServer) {
   const io = new Server(server, {
@@ -67,7 +72,6 @@ function setUpSocket(server: HttpServer | HttpsServer) {
   }
 
   const sendAnonymous = async (message: messageI) => {
-
     const { content, userId } = message;
 
     const newMessage = await Message.create({
@@ -76,9 +80,7 @@ function setUpSocket(server: HttpServer | HttpsServer) {
       content,
       messageType: "text",
     });
-    console.log('xxyy',newMessage)
-
-    
+    console.log("xxyy", newMessage);
 
     if (newMessage.sender && !newMessage.recipient) {
       const anonymousChannel = await Channel.findOneAndUpdate(
@@ -89,57 +91,69 @@ function setUpSocket(server: HttpServer | HttpsServer) {
           $push: { messages: newMessage._id },
         },
       );
-      const populatedMessage = await Message.findById(newMessage.id).populate("sender", 'profileName anonymousName anonymousProfile')
+      const populatedMessage = await Message.findById(newMessage.id).populate(
+        "sender",
+        "profileName anonymousName anonymousProfile",
+      );
 
       io.to("anonymous").emit("recieveAnonymous", populatedMessage);
-
-
     }
-    
   };
-  const sendMessage = async(message:messageI)=>{
-    const {userId,recipientId,content} = message
+  const sendMessage = async (message: messageI) => {
+    const { userId, recipientId, content } = message;
 
     let newMessage = await Message.create({
       sender: userId,
       recipient: recipientId,
       content,
-      messageType: 'text'
-    })
-    newMessage = await newMessage.populate([{
-      path: 'sender',
-      select: 'profileImage firstName'
-    },{
-      path: 'recipient',
-      select: 'profileImage firstName'
-    }])
+      messageType: "text",
+    });
+    newMessage = await newMessage.populate([
+      {
+        path: "sender",
+        select: "profileImage firstName",
+      },
+      {
+        path: "recipient",
+        select: "profileImage firstName",
+      },
+    ]);
 
-    
+    const sender = userSocketMap.get(message?.userId);
+    const reciever = userSocketMap.get(message.recipientId);
 
-    const sender = userSocketMap.get(message?.userId)
-    const reciever = userSocketMap.get(message.recipientId)
-
-    console.log('test',newMessage)
-    console.log('recipient',recipientId)
-    if(newMessage.sender && newMessage.recipient){
-      io.to(reciever).emit('recieveMessage',newMessage)
-      io.to(sender).emit('recieveMessage',newMessage)
+    console.log("test", newMessage);
+    console.log("recipient", recipientId);
+    if (newMessage.sender && newMessage.recipient) {
+      io.to(reciever).emit("recieveMessage", newMessage);
+      io.to(sender).emit("recieveMessage", newMessage);
     }
-
-  }
-  const handleFile = async(data:dmType)=>{
-    console.log('naruto',data)
-    const sender = userSocketMap.get(data.sender._id)
-    if(data.recipient){
-      io.to(sender).emit('recieveFile',data)
-      const recipient = userSocketMap.get(data.recipient._id)
-      io.to(recipient).emit('recieveFile',data)
-
-    }else{
-      io.to('anonymous').emit('recieveFile',data)
+  };
+  const handleFile = async (data: dmType) => {
+    console.log("naruto", data);
+    const sender = userSocketMap.get(data.sender._id);
+    if (data.recipient) {
+      io.to(sender).emit("recieveFile", data);
+      const recipient = userSocketMap.get(data.recipient._id);
+      io.to(recipient).emit("recieveFile", data);
+    } else {
+      io.to("anonymous").emit("recieveFile", data);
     }
+  };
 
-  }
+  const handleUserIsTyping = (
+    message: userIsTypingI,
+  ) => {
+    console.log("dormamu", message);
+    if (message.type === "channel") {
+      io.to("anonymous").emit("isTyping", message.userInfo);
+    }
+    if (message.type === "direct") {
+      const recipient = userSocketMap.get(message.recipientId);
+
+      io.to(recipient).emit("isTyping", message.userInfo);
+    }
+  };
   io.on("connect", (socket) => {
     console.log("user Connected");
     const { userId } = socket.handshake.query;
@@ -153,6 +167,7 @@ function setUpSocket(server: HttpServer | HttpsServer) {
     socket.on("anonymous", sendAnonymous);
     socket.on("message", sendMessage);
     socket.on("upload", handleFile);
+    socket.on("typing", handleUserIsTyping);
     socket.on("disconnect", () => disconnect(socket));
   });
 }
