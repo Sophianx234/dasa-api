@@ -66,6 +66,11 @@ function setUpSocket(server: HttpServer | HttpsServer) {
     for (const [userId, socketId] of userSocketMap.entries()) {
       if (socketId === socket.id) {
         userSocketMap.delete(userId);
+        io.to('anonymous').emit('isOffline',{
+          userId,
+          isOnline:true
+          
+        })
         break;
       }
     }
@@ -154,13 +159,30 @@ function setUpSocket(server: HttpServer | HttpsServer) {
       io.to(recipient).emit("isTyping", message.userInfo);
     }
   };
-  io.on("connect", (socket) => {
+  io.on("connect", async(socket) => {
     console.log("user Connected");
     const { userId } = socket.handshake.query;
     if (userId) {
       userSocketMap.set(userId, socket.id);
       console.log(`User ${userId} connected with ${socket.id}`);
       socket.join("anonymous");
+      
+      try{
+      const user:signupCredentialsExtended | null = await User.findById(userId)
+      console.log('user',user)
+      if(user){
+
+        io.to('anonymous').emit('isOnline',{
+          userId,
+          userName: user.username,
+          isOnline: true
+        })
+      }
+
+      }catch(err){
+        console.log('error fetching user')
+
+      }
     } else {
       console.log("UserId wasn't provided during handshake");
     }
