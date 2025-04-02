@@ -32,27 +32,22 @@ export const getAllMessages = catchAsync(
   },
 );
 
-export const getMessages = catchAsync(
+export const getRecentMessage = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
     const senderId = new mongoose.Types.ObjectId(req.params.senderId);
     const recipientId = new mongoose.Types.ObjectId(req.params.recipientId);
     if (!senderId && !recipientId)
       return next(new AppError("both sender and recipient Id required", 404));
-    const messages = await Message.find({
-      $or: [
-        { sender: senderId, recipient: recipientId },
-        { sender: recipientId, recipient: senderId },
-      ],
-    })
-      .sort({ createdAt: 1 })
+    const message = await Message.find({sender: recipientId, recipient: senderId })
+      .sort({ createdAt: -1 })
       .populate("sender recipient", "");
 
-    if (!messages)
+    if (!message)
       return next(
         new AppError("could not find messages related to users", 400),
       );
     res.status(200).json({
-      messages,
+      message,
     });
   },
 );

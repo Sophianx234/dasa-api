@@ -134,3 +134,16 @@ export const updateUser = catchAsync(
     });
   },
 );
+
+export const checkUserIsAuthenticated = (req:RequestExtended,res:Response)=>{
+  console.log(req.cookies)
+  if(req.cookies.jwt){
+    res.status(200).json({
+      isAuthenticated: true
+    })
+  }else{
+    res.status(200).json({
+      isAuthenticated:false
+    })
+  }
+}
