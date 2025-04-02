@@ -11,11 +11,11 @@ router.route('/login').post(login)
 router.route('/forgot-password').post(forgotPassword)
 router.route('/reset-password/:token').patch(resetPassword)
 
+router.route('/auth/check').get(checkUserIsAuthenticated)
 router.use(protect)
 router.route("/getme").get(getMe);
 router.route("/:id").get(getUser);
 router.route("/").get(getAllUsers);
-router.route('/auth/check').get(checkUserIsAuthenticated)
 router.route("/delete-user").delete(deleteUser);
 router.route('/upload').patch(upload.single('image'),resizeUserPhoto)
 router.route("/update-user").patch(updateUser);

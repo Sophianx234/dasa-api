@@ -8,7 +8,7 @@ import { AppError } from "../utils/AppError";
 import { catchAsync } from "../utils/catchAsync";
 import { Email } from "../utils/Email";
 
-type jwtPayload = {
+export type jwtPayload = {
   id: string;
   iat: number;
   exp: number;
@@ -20,7 +20,7 @@ export type RequestExtended = Request & {
 
 // Extend the Express Request interface
 
-const verifyToken = (token: string, secret: string): Promise<jwtPayload> => {
+export const verifyToken = (token: string, secret: string): Promise<jwtPayload> => {
   return new Promise((resolve, reject) => {
     jwt.verify(token, secret, (err, decoded) => {
       if (err) {
@@ -251,6 +251,7 @@ export const logout = catchAsync(
     });
     res.status(200).json({
       status: "success",
+      
     });
   },
 );

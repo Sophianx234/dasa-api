@@ -6,7 +6,8 @@ import { ApiFeatures } from "../utils/ApiFeatures";
 import { AppError } from "../utils/AppError";
 import { catchAsync } from "../utils/catchAsync";
 import { filteredObj } from "../utils/filteredObj";
-import { RequestExtended } from "./authController";
+import { jwtPayload, RequestExtended, verifyToken } from "./authController";
+import { JwtPayload } from "jsonwebtoken";
 export type reqQueryType = string | string[] | null;
 
 // export const uploadUserPhoto = upload.single("image");
@@ -135,15 +136,27 @@ export const updateUser = catchAsync(
   },
 );
 
-export const checkUserIsAuthenticated = (req:RequestExtended,res:Response)=>{
+export const checkUserIsAuthenticated = catchAsync(async (req:RequestExtended,res:Response,next:NextFunction)=>{
   console.log(req.cookies)
-  if(req.cookies.jwt){
-    res.status(200).json({
-      isAuthenticated: true
-    })
-  }else{
-    res.status(200).json({
-      isAuthenticated:false
-    })
-  }
-}
+  if(!req.cookies.jwt) res.status(200).json({
+    isAuthenticated:false
+  })
+    
+    const token = req.cookies.jwt
+    const secret = process.env.JWT_SECRET
+    const decoded:jwtPayload =  await verifyToken(token,secret!)
+    const {id,iat} = decoded
+    const user = await User.findById(id)
+    console.log('user',user)
+    if(user){
+      res.status(200).json({
+        isAuthenticated: true
+      })
+
+    } else{
+      res.status(200).json({
+        isAuthenticated:false
+      })
+    }
+
+})
