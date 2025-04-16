@@ -86,7 +86,7 @@ export const getUser = catchAsync(async(req:Request,res:Response,next:NextFuncti
     })
 })
 
-export const deleteUser = catchAsync(
+export const deleteMe = catchAsync(
   async (req: RequestExtended, res: Response, next: NextFunction) => {
     req.params.id = req.user?.id;
     const user = await User.findByIdAndUpdate(
@@ -104,6 +104,24 @@ export const deleteUser = catchAsync(
     });
   },
 );
+export const deleteUser = catchAsync(
+  async (req: RequestExtended, res: Response, next: NextFunction) => {
+    
+    const user = await User.findByIdAndUpdate(
+      req.params.id,
+      { active: false },
+      {
+        new: true,
+      },
+    );
+    if (!user)
+      return next(new AppError("can't find user with specified id", 400));
+    res.status(200).json({
+      status: " success",
+      data: null,
+    });
+  },
+);
 
 export const updateUser = catchAsync(
   async (req: RequestExtended, res: Response, next: NextFunction) => {
@@ -113,11 +131,46 @@ export const updateUser = catchAsync(
       "hall",
       "course",
       "contact",
-      "sex"
+      "sex",
+      'role'
     );
+    console.log('texkd123',req?.params?.id,req.body.role)
+    
 
     const updatedUser = await User.findByIdAndUpdate(
-      req.user?.id,
+      req.params.id,
+      filteredBody,
+      {
+        new: true,
+        runValidators: false,
+      },
+    );
+    if (!updatedUser)
+      return next(new AppError("can't find user with that id", 400));
+console.log('updated',updatedUser)
+    res.status(200).json({
+      status: "success",
+      data: {
+        updatedUser,
+      },
+    });
+  },
+);
+export const updateCurrentUser = catchAsync(
+  async (req: RequestExtended, res: Response, next: NextFunction) => {
+    const filteredBody = filteredObj(
+      req.body,
+      "name",
+      "hall",
+      "course",
+      "contact",
+      "sex",
+      'role'
+    );
+    
+
+    const updatedUser = await User.findByIdAndUpdate(
+      req?.user?.id,
       filteredBody,
       {
         new: true,

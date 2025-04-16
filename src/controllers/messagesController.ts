@@ -1,16 +1,13 @@
 import { NextFunction, Request, Response } from "express";
+import fs from "fs";
 import mongoose from "mongoose";
+import cloudinary from "../middleware/cloudinary";
+import Channel from "../models/channelModel";
 import Message from "../models/messagesModel";
 import { ApiFeatures } from "../utils/ApiFeatures";
 import { AppError } from "../utils/AppError";
 import { catchAsync } from "../utils/catchAsync";
 import { RequestExtended } from "./authController";
-import { channel } from "diagnostics_channel";
-import Channel from "../models/channelModel";
-import { Query } from "mongoose";
-import path from "path";
-import cloudinary from "../middleware/cloudinary";
-import fs from "fs";
 export const getAllMessages = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
     const feature = new ApiFeatures(req.query, Message.find())
@@ -38,7 +35,10 @@ export const getRecentMessage = catchAsync(
     const recipientId = new mongoose.Types.ObjectId(req.params.recipientId);
     if (!senderId && !recipientId)
       return next(new AppError("both sender and recipient Id required", 404));
-    const message = await Message.find({sender: recipientId, recipient: senderId })
+    const message = await Message.findOne({$or: [
+      {sender: recipientId, recipient: senderId },
+      {sender: senderId, recipient: recipientId }
+    ]})
       .sort({ createdAt: -1 })
       .populate("sender recipient", "");
 
@@ -47,7 +47,7 @@ export const getRecentMessage = catchAsync(
         new AppError("could not find messages related to users", 400),
       );
     res.status(200).json({
-      message,
+      message
     });
   },
 );

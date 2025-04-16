@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { forgotPassword, login, logout, protect, resetPassword, restrictTo, signup, updatePassword } from "../controllers/authController";
-import { checkUserIsAuthenticated, deleteUser, getAllUsers, getMe, getUser, resizeUserPhoto, updateUser } from "../controllers/userController";
+import { checkUserIsAuthenticated, deleteMe, deleteUser, getAllUsers, getMe, getUser, resizeUserPhoto, updateCurrentUser, updateUser } from "../controllers/userController";
 import { upload } from "../middleware/multer";
 
 const router = Router();
@@ -14,11 +14,13 @@ router.route('/reset-password/:token').patch(resetPassword)
 router.route('/auth/check').get(checkUserIsAuthenticated)
 router.use(protect)
 router.route("/getme").get(getMe);
-router.route("/:id").get(getUser);
+router.route("/:id").get(getUser).delete(deleteUser).patch(updateUser);
 router.route("/").get(getAllUsers);
-router.route("/delete-user").delete(deleteUser);
+router.route("/deleteMe").delete(deleteMe);
+;
 router.route('/upload').patch(upload.single('image'),resizeUserPhoto)
-router.route("/update-user").patch(updateUser);
+// router.route("/update/").patch();
+router.route("/updateMe").patch(updateCurrentUser);
 router.route("/update-password").patch(updatePassword)
 
 export default router;
