@@ -11,15 +11,20 @@ import { messages } from "./messages";
 import Anonymous from "../models/channelModel";
 
 import { anonymous } from "./anonymous";
+import Event from "../models/eventsModel";
+import { events } from "./events";
 dotenv.config();
 
 async function importData() {
   try {
     //  await User.create(users);
-    await Product.create(products);
+    /* await Product.create(products);
     await Media.create(media);
     await Message.create(messages);
-    await Anonymous.create(anonymous);
+    await Anonymous.create(anonymous); */
+    console.log("Importing events: ", events.length, "items");
+
+    await Event.create(events);
     console.log("Data imported successfully");
     // User.create(users)
   } catch (err) {
@@ -43,7 +48,7 @@ async function deleteData() {
     process.exit();
   }
 }
-const DB = process.env.DATABASE_LOCAL;
+const DB = process.env.DATABASE?.replace('<db_password>',`${process.env.DATABASE_PASSWORD}`);
 
 mongoose
   .connect(DB!)
