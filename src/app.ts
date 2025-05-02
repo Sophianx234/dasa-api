@@ -17,6 +17,7 @@ import announcementRoute from "./routes/announcementRoute";
 import notificationsRoute from "./routes/notificationsRoute";
 import { AppError } from "./utils/AppError";
 import { globalError } from "./utils/globalError";
+import rateLimit from "express-rate-limit";
 
 export type customError = Error & {
   statusCode: number;
@@ -26,11 +27,11 @@ export type customError = Error & {
 };
 dotenv.config();
 const app = express();
-// const limiter = rateLimit({
-//   max: 100,
-//   windowMs: 60 * 60 * 1000,
-//   message: "Too many request from this IP, please try again in an hour!",
-// });
+ const limiter = rateLimit({
+   max: 100,
+  windowMs: 60 * 60 * 1000,
+   message: "Too many request from this IP, please try again in an hour!",
+ });
 
  app.use(
   cors({
