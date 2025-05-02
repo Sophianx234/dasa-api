@@ -21,8 +21,7 @@ export type mediaDocument = Document & {
   asset_folder: string,
   display_name: string,
   original_filename:string
-  
-,
+  order?: string
     uploadedAt: Date
 }
 
@@ -51,6 +50,7 @@ const mediaSchema = new mongoose.Schema<mediaDocument>({
     original_filename:String
     
   ,
+  order:String,
       uploadedAt: {
         type: Date,
         default: Date.now, // Timestamp of when the file was uploaded

@@ -13,6 +13,8 @@ import messagesRoute from "./routes/MessageRoute";
 import productsRoute from "./routes/productsRoute";
 import usersRoute from "./routes/userRoutes";
 import eventsRoute from "./routes/eventsRoute";
+import announcementRoute from "./routes/announcementRoute";
+import notificationsRoute from "./routes/notificationsRoute";
 import { AppError } from "./utils/AppError";
 import { globalError } from "./utils/globalError";
 
@@ -58,6 +60,8 @@ app.use("/api/v1/products", productsRoute);
 app.use("/api/v1/users", usersRoute);
 app.use("/api/v1/messages", messagesRoute);
 app.use("/api/v1/events", eventsRoute);
+app.use("/api/v1/announcements", announcementRoute);
+app.use("/api/v1/notifications", notificationsRoute);
 
 app.all("*", function (req: Request, res: Response, next: NextFunction) {
   next(new AppError(`can't find ${req.originalUrl} on this server `, 404));

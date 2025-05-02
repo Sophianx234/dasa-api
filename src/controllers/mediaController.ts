@@ -88,7 +88,7 @@ export const getAllImages = catchAsync(
 );
 export const getAllVideos = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
-    const feature = new ApiFeatures(req.query, Media.find({ format: "mp4" }))
+    const feature = new ApiFeatures(req.query, Media.find({ format: "mp4" }).sort({order:1}))
       .filter()
       .sort()
       .limit()

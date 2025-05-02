@@ -17,7 +17,8 @@ export type userDocument = Document & {
   active: boolean;
   profileImage?: string;
   bio?: string;
-  sex: "male" | "femal";
+  sex: "male" | "female";
+  birthDate: Date
   anonymousName: string;
   anonymousProfile: string;
   confirmPassword?: string | boolean | null;
@@ -54,6 +55,8 @@ const userSchema = new mongoose.Schema<userDocument>({
     type: String,
     default: "https://i.ibb.co/BCqPkTT/default-img.jpg",
   },
+  birthDate:Date
+  ,
   bio: String,
   anonymousName:String,
 

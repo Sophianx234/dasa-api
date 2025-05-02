@@ -81,7 +81,6 @@ export const getUser = catchAsync(async(req:Request,res:Response,next:NextFuncti
   if(!user) return next(new AppError('Could not find user with specified ID:',400))
 
     res.status(200).json({
-      status:'success',
       user
     })
 })
@@ -203,7 +202,8 @@ export const checkUserIsAuthenticated = catchAsync(async (req:RequestExtended,re
     console.log('user',user)
     if(user){
       res.status(200).json({
-        isAuthenticated: true
+        isAuthenticated: true,
+        user
       })
 
     } else{

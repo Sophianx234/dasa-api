@@ -13,18 +13,24 @@ import Anonymous from "../models/channelModel";
 import { anonymous } from "./anonymous";
 import Event from "../models/eventsModel";
 import { events } from "./events";
+import Announcement from "../models/announcementModel";
+import { announcements } from "./announcement";
+import { videos } from "./videos";
 dotenv.config();
 
 async function importData() {
   try {
     //  await User.create(users);
     /* await Product.create(products);
-    await Media.create(media);
     await Message.create(messages);
+    await Announcement.create(announcements);
     await Anonymous.create(anonymous); */
-    console.log("Importing events: ", events.length, "items");
-
-    await Event.create(events);
+    console.log("Importing media: ", media.length, "items");
+    await Media.create(media);
+    console.log("Importing videos: ", videos.length, "items");
+    await Media.create(videos);
+    
+    // await Event.create(events);
     console.log("Data imported successfully");
     // User.create(users)
   } catch (err) {
@@ -35,10 +41,11 @@ async function importData() {
 }
 async function deleteData() {
   try {
-    await Product.deleteMany();
+    /* await Product.deleteMany();
     await User.deleteMany();
-    await Media.deleteMany();
-    await Message.deleteMany();
+    await Message.deleteMany(); */
+    await Media.deleteMany()
+    // await Announcement.deleteMany();
     console.log("Data deleted successfully");
 
     // User.create(users)

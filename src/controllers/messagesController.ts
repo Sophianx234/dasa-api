@@ -145,6 +145,7 @@ export const getAllAnonymous = catchAsync(
       req.query,
       Channel.findOne({ name: "anonymous" }).populate({
         path: "messages",
+        options:{limit: Number(req.query.limit),sort:req.query.sort?{createdAt:-1}:undefined },
         select: "content fileURL anonymousName sender createdAt",
         populate: {
           path: "sender",

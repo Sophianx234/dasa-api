@@ -7,6 +7,7 @@ import { ObjectId } from "mongodb";
 import User from "./models/userModel";
 import { catchAsync } from "./utils/catchAsync";
 import { NextFunction } from "express";
+import Notification from "./models/notifications";
 
 interface messageI {
   recipientId: string;
@@ -159,6 +160,13 @@ function setUpSocket(server: HttpServer | HttpsServer) {
       io.to(recipient).emit("isTyping", message.userInfo);
     }
   };
+  const sendNotification = async (message:{content:string,type:string})=>{
+    console.log('12xzzzz',message)
+    const notification = await Notification.create(message)
+    if(!notification) return console.log('could not create new notification')
+      io.emit('recieveNotification',notification)
+
+  }
   io.on("connect", async(socket) => {
     console.log("user Connected");
     const { userId } = socket.handshake.query;
@@ -187,6 +195,7 @@ function setUpSocket(server: HttpServer | HttpsServer) {
       console.log("UserId wasn't provided during handshake");
     }
     socket.on("anonymous", sendAnonymous);
+    socket.on("notification", sendNotification);
     socket.on("message", sendMessage);
     socket.on("upload", handleFile);
     socket.on("typing", handleUserIsTyping);

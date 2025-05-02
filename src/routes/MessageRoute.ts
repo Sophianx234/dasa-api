@@ -4,7 +4,7 @@ import { getAllAnonymous, getAllMessages, getDirectMessage, getRecentMessage, ha
 import { upload } from "../middleware/multer";
 
 const router = Router()
-router.use(protect)
+// router.use(protect)
 
 
 router.route('/').get(getAllMessages)
