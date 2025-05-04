@@ -54,6 +54,7 @@ function createSendToken(
     expires: new Date(Date.now() + 24 * 60 * 60 * 1000),
     httpOnly: true,
     sameSite: process.env.NODE_ENV === 'production'?"none":'lax',
+    
     path: "/",
   });
 
@@ -244,7 +245,7 @@ console.log('hashed',hashedToken)
 
     const user = await User.findOne({
       passwordResetToken: hashedToken,
-      // passwordResetExpires: { $gt: Date.now() },
+      passwordResetExpires: { $gt: Date.now() },
     });
     console.log('user',user)
     if (!user) return next(new AppError("Token is invalid or expired ", 400));
