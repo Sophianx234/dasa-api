@@ -20,7 +20,7 @@
     "@types/compression": "^1.7.5",
     "@types/cookie-parser": "^1.4.8",
     "@types/cors": "^2.8.17",
-    "@types/express": "^5.0.0",
+    "@types/express": "^5.0.1",
     "@types/hpp": "^0.2.6",
     "@types/html-to-text": "^9.0.4",
     "@types/jsonwebtoken": "^9.0.7",
