@@ -193,17 +193,27 @@ export const updatePassword = catchAsync(
 export const forgotPassword = catchAsync(
   async (req: RequestExtended, res: Response, next: NextFunction) => {
     const { email } = req.body;
+    console.log('example',email)
     const user = await User.findOne({ email });
     if (!user)
       return next(
-        new AppError("can't find user with the email specified ", 401),
-      );
+    new AppError("can't find user with the email specified ", 401),
+  );
+  
+  const resetToken = user.createPasswordResetToken();
 
-    const resetToken = user.createPasswordResetToken();
-
+  
+  try {
     await user.save({ validateBeforeSave: false });
-
-    const resetURL = `${req.protocol}//${req.get("host")}/api/v1/users/reset-password/${resetToken}`;
+    console.log('User saved successfully');
+  } catch (err) {
+    console.error('Error saving user:', err);
+    return next(new AppError('Could not save user', 500));
+  }
+  
+  const resetURL = `${req.protocol}://dasaug.netlify.app/homepage/resetpassword/${resetToken}`;
+  console.log('u',resetURL)
+  console.log('resetToken1',resetToken)
     try {
       await new Email(user, resetURL).sendPasswordReset();
       res.status(200).json({
@@ -221,15 +231,22 @@ export const forgotPassword = catchAsync(
 
 export const resetPassword = catchAsync(
   async (req: RequestExtended, res: Response, next: NextFunction) => {
-    const hashedToken = crypto
-      .createHash("sha256")
-      .update(req.params.token)
-      .digest("hex");
+    console.log('resetToken2',req.params.token)
+    const token = req.params.token.replace(':','')
+
+    console.log('latest token ',token)
+    const hashedToken =  crypto
+        .createHash("sha256")
+        .update(token)
+        .digest("hex");
+    ;
+console.log('hashed',hashedToken)
 
     const user = await User.findOne({
       passwordResetToken: hashedToken,
-      passwordResetExpires: { $gt: Date.now() },
+      // passwordResetExpires: { $gt: Date.now() },
     });
+    console.log('user',user)
     if (!user) return next(new AppError("Token is invalid or expired ", 400));
 
     const { password, confirmPassword } = req.body;

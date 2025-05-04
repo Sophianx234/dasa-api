@@ -22,6 +22,7 @@ export class Email {
         user: process.env.EMAIL_USERNAME,
         pass: process.env.EMAIL_PASSWORD,
       },
+      connectionTimeout: 10000
     });
   }
 
@@ -43,23 +44,27 @@ export class Email {
     `;
     
 
-      const message = 'message not Damian'
+      // const message = 'message not Damian'
       const mailOptions = {
         from: this.from,
         to: this.to,
         subject,
         html,
-        text: convert(html)
+        // text: convert(html)
       };
-      return await this.newTransport().sendMail(mailOptions);
+
+      console.log(subject,'subject')
+       await this.newTransport().sendMail(mailOptions);
     
   }
 
   async sendWelcome() {
-   return  await this.send(`Welcome to the Dasa Family ${this.firstName}`);
+   await this.send(`Welcome to the Dasa Family ${this.firstName}`);
   }
 
   async sendPasswordReset() {
-   return  await this.send("Your password reset token (valid for only 10 minutes)");
+    console.log('Preparing to send email...');
+    
+      await this.send("Your password reset token (valid for only 10 minutes)");
   }
 }

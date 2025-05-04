@@ -112,12 +112,15 @@ userSchema.pre(/^find/, function (this: any, next) {
   next();
 });
 userSchema.pre("save", function (this: userDocument, next) {
-  this.username = `${this.firstName} ${this.lastName}`;
-  this.anonymousProfile =
+  if(this.isNew){
+
+    this.username = `${this.firstName} ${this.lastName}`;
+    this.anonymousProfile =
     this.sex === "male"
-      ? "https://res.cloudinary.com/dtytb8qrc/image/upload/v1738576015/Dasa/users/bwg76dwwvyte11f71jah.jpg"
-      : "https://res.cloudinary.com/dtytb8qrc/image/upload/v1738576016/Dasa/users/ocmq2tel9kfwdb5ew6ej.jpg";
-      this.anonymousName = genRandomName()
+    ? "https://res.cloudinary.com/dtytb8qrc/image/upload/v1738576015/Dasa/users/bwg76dwwvyte11f71jah.jpg"
+    : "https://res.cloudinary.com/dtytb8qrc/image/upload/v1738576016/Dasa/users/ocmq2tel9kfwdb5ew6ej.jpg";
+    this.anonymousName = genRandomName()
+  }
 
   next();
 });
