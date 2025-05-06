@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "build": "tsc --build",
+    "build": "cross-env NODE_ENV=development tsc --build",
     "start": "tsc && node dist/server.js",
     "dev": "nodemon ",
     "dev:prod": "cross-env NODE_ENV=production nodemon ",
