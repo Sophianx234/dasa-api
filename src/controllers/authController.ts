@@ -52,7 +52,6 @@ function createSendToken(
   res.cookie("jwt", token, {
     secure: true, // Always true in production
     httpOnly: true,
-    sameSite: "none", // Always 'None' for cross-site (iOS Safari needs this)
     expires: new Date(Date.now() + 24 * 60 * 60 * 1000),
     path: "/",
   });
