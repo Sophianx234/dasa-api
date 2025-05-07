@@ -50,11 +50,10 @@ function createSendToken(
   const cookieExpiry: number = Number(process.env.JWT_COOKIE_EXPIRES_IN);
 
   res.cookie("jwt", token, {
-    secure: process.env.NODE_ENV === "production",
-    expires: new Date(Date.now() + 24 * 60 * 60 * 1000),
+    secure: true, // Always true in production
     httpOnly: true,
-    sameSite: process.env.NODE_ENV === 'production'?"none":'lax',
-    
+    sameSite: "none", // Always 'None' for cross-site (iOS Safari needs this)
+    expires: new Date(Date.now() + 24 * 60 * 60 * 1000),
     path: "/",
   });
 
