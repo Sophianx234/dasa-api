@@ -197,7 +197,7 @@ export const checkUserIsAuthenticated = catchAsync(async (req:RequestExtended,re
     const token = req.cookies.jwt
     const secret = process.env.JWT_SECRET
     const decoded:jwtPayload =  await verifyToken(token,secret!)
-    const {id,iat} = decoded
+    const {id} = decoded
     const user = await User.findById(id)
     console.log('user',user)
     if(user){
