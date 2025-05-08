@@ -190,11 +190,17 @@ export const updateCurrentUser = catchAsync(
 
 export const checkUserIsAuthenticated = catchAsync(async (req:RequestExtended,res:Response,next:NextFunction)=>{
   console.log(req.cookies)
-  if(!req.cookies.jwt) res.status(200).json({
+  if(!req.cookies.jwt || !req.headers.authorization?.split(" ")[1] ) res.status(200).json({
     isAuthenticated:false
   })
     
-    const token = req.cookies.jwt
+    let token 
+    if(req.cookies.jwt){
+      token = req.cookies.jwt
+    } else if(req.headers.authorization?.split(" ")[1]){
+      token = req.headers.authorization?.split(" ")[1]
+
+    }
     const secret = process.env.JWT_SECRET
     const decoded:jwtPayload =  await verifyToken(token,secret!)
     const {id} = decoded
