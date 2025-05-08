@@ -193,6 +193,7 @@ export const checkUserIsAuthenticated = catchAsync(async (req:RequestExtended,re
   if(!req.cookies.jwt || !req.headers.authorization?.split(" ")[1] ) res.status(200).json({
     isAuthenticated:false
   })
+  console.log('authorization',req.headers.authorization?.split(' ')[1])
     
     let token 
     if(req.cookies.jwt){
