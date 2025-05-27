@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { forgotPassword, login, logout, protect, resetPassword, restrictTo, signup, updatePassword } from "../controllers/authController";
+import { forgotPassword, login, logout, protect, resetPassword, signup, updatePassword } from "../controllers/authController";
 import { checkUserIsAuthenticated, deleteMe, deleteUser, getAllUsers, getMe, getUser, resizeUserPhoto, updateCurrentUser, updateUser } from "../controllers/userController";
 import { upload } from "../middleware/multer";
 
