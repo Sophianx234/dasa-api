@@ -38,12 +38,12 @@ type userModel = Model<userDocument>;
 
 const userSchema = new mongoose.Schema<userDocument>({
   username: String,
-  firstName: { type: String, require: [true, "firstname is required"] },
-  lastName: { type: String, require: [true, "lastname is required"] },
-  email: { type: String, require: [true, "email is required"] },
+  firstName: { type: String, required: [true, "firstname is required"] },
+  lastName: { type: String, required: [true, "lastname is required"] },
+  email: { type: String, required: [true, "email is required"] },
   password: {
     type: String,
-    require: [true, "password is required"],
+    required: [true, "password is required"],
     minLength: [8, "password must be at least 8 characters"],
     select: false,
   },
