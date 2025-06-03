@@ -1,10 +1,11 @@
-import { uniqueNamesGenerator,adjectives,animals} from "unique-names-generator"
+import { adjectives, animals, uniqueNamesGenerator} from "unique-names-generator"
+
 export function genRandomName (){
     const customConfig = {
-      dictionaries: [animals],
-      seperator: '',
+      dictionaries: [animals,adjectives],
+      separator: '',
       length: 2,
-      style: 'capital' as 'capital'
+      style: `capital` as 'capital'
 
     }
     return  uniqueNamesGenerator(customConfig).replace("_",'') + Math.floor(Math.random()*100)
