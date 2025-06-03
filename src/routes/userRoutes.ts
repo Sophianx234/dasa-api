@@ -11,7 +11,6 @@ router.route('/login').post(login)
 router.route('/forgot-password').post(forgotPassword)
 router.route('/reset-password/:token').patch(resetPassword)
 
-router.route('/auth/check').get(checkUserIsAuthenticated)
 router.use(protect)
 router.route("/getme").get(getMe);
 router.route("/:id").get(getUser).delete(deleteUser).patch(updateUser);

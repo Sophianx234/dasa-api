@@ -52,7 +52,7 @@ export const getAllUsers = catchAsync(
       .pagination();
     const users = await features.query;
     if (!users) return next(new AppError("can't find users", 404));
-    Array.isArray(users) &&
+    
       res.status(200).json({
         status: "success",
         totalUsers: users.length,
