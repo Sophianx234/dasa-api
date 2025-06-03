@@ -52,7 +52,7 @@ function createSendToken(
   res.cookie("jwt", token, {
     secure: true, // Always true in production
     httpOnly: true,
-    expires: new Date(Date.now() + cookieExpiry),
+    expires: new Date(Date.now() + cookieExpiry*60*60*1000),
     
     path: "/",
   });
@@ -72,6 +72,7 @@ export const signup = catchAsync(
       email,
       profileImage,
       password,
+      birthDate,
       contact,
       hall,
       course,
@@ -82,6 +83,7 @@ export const signup = catchAsync(
       {
         firstName,
         lastName,
+        birthDate,
         email,
         profileImage,
         password,
