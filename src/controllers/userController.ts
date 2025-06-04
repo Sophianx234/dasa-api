@@ -1,13 +1,14 @@
 import { NextFunction, Request, Response } from "express";
 import fs from "fs";
 import cloudinary from "../middleware/cloudinary";
-import User from "../models/userModel";
+import User, { userDocument } from "../models/userModel";
 import { ApiFeatures } from "../utils/ApiFeatures";
 import { AppError } from "../utils/AppError";
 import { catchAsync } from "../utils/catchAsync";
 import { filteredObj } from "../utils/filteredObj";
 import { jwtPayload, RequestExtended, verifyToken } from "./authController";
 import { JwtPayload } from "jsonwebtoken";
+import { UserInfo } from "os";
 export type reqQueryType = string | string[] | null;
 
 // export const uploadUserPhoto = upload.single("image");
@@ -55,7 +56,7 @@ export const getAllUsers = catchAsync(
     
       res.status(200).json({
         status: "success",
-        totalUsers: users.length,
+        totalUsers: (users as userDocument[]).length,
         users,
       });
   },
