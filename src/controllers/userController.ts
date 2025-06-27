@@ -7,8 +7,6 @@ import { AppError } from "../utils/AppError";
 import { catchAsync } from "../utils/catchAsync";
 import { filteredObj } from "../utils/filteredObj";
 import { jwtPayload, RequestExtended, verifyToken } from "./authController";
-import { JwtPayload } from "jsonwebtoken";
-import { UserInfo } from "os";
 export type reqQueryType = string | string[] | null;
 
 // export const uploadUserPhoto = upload.single("image");
